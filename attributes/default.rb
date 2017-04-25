@@ -301,7 +301,7 @@ default['stig']['sshd_config']['allow_tcp_forwarding'] = 'yes'
 # lists ofauthentication method names.Successful authentication requires completion
 # of every method in at leastone of these lists.
 # This option is only available for SSH protocol 2
-default['stig']['sshd_config']['authentication_methods'] = %w()
+default['stig']['sshd_config']['authentication_methods'] = %w[]
 
 # Specifies a program to be used to look up the user's public keys.
 default['stig']['sshd_config']['authorized_keys_command'] = ''
@@ -463,11 +463,11 @@ default['stig']['sshd_config']['host_certificate'] = ''
 # group/world-accessible. It is possible to have multiple host key files. 'rsa1'
 # keys are used for version 1 and 'dsa' 'ecdsa' or 'rsa' are used for version 2
 # of the SSH protocol.
-default['stig']['sshd_config']['host_key'] = %w(
+default['stig']['sshd_config']['host_key'] = %w[
   /etc/ssh/ssh_host_key
   /etc/ssh/ssh_host_rsa_key
   /etc/ssh/ssh_host_dsa_key
-)
+]
 
 # Specifies that .rhosts and .shosts files will not be used in RhostsRSAAuthenticationorHostbasedAuthentication
 # /etc/hosts.equiv and /etc/ssh/shosts.equiv are still used. The default is 'yes' (true)
@@ -510,7 +510,7 @@ default['stig']['sshd_config']['login_grace_time'] = 120
 
 # Specifies the port	number that sshd listens on.  The default is
 # 22.  Multiple options of this type are permitted
-default['stig']['sshd_config']['port'] = %w(22)
+default['stig']['sshd_config']['port'] = %w[22]
 
 # Specifies whether sshd should print the date and time when the user last logged in.
 default['stig']['sshd_config']['print_last_log'] = 'yes'
@@ -704,7 +704,7 @@ default['stig']['sshd_config']['challenge_response_authentication'] = 'no'
 default['stig']['sshd_config']['use_pam_auth'] = 'yes'
 
 # Limit Access via SSH
-default['stig']['sshd_config']['deny_users'] = %w(
+default['stig']['sshd_config']['deny_users'] = %w[
   bin
   daemon
   adm
@@ -723,7 +723,7 @@ default['stig']['sshd_config']['deny_users'] = %w(
   rpcuser
   nfsnobody
   sshd
-)
+]
 default['stig']['sshd_config']['deny_groups'] = []
 
 #  Specifies whether ssh-agent(1) forwarding is permitted.
@@ -736,7 +736,7 @@ default['stig']['sshd_config']['allow_groups'] = []
 # Specifies what environment	variables sent by the client will be copied into
 # the session's environ
 # see: https://www.freebsd.org/cgi/man.cgi?query=environ&sektion=7&apropos=0&manpath=FreeBSD+11.0-RELEASE+and+Ports
-default['stig']['sshd_config']['accept_env'] = %w(
+default['stig']['sshd_config']['accept_env'] = %w[
   LANG
   LC_CTYPE
   LC_NUMERIC
@@ -752,7 +752,7 @@ default['stig']['sshd_config']['accept_env'] = %w(
   LC_IDENTIFICATION
   LC_ALL
   LANGUAGE XMODIFIERS
-)
+]
 # Specifies which address family should be used by sshd. Valid arguments are:
 # 'any', 'inet' (use IPv4 only), or 'inet6' (use IPv6 only). The default is 'any'
 default['stig']['sshd_config']['address_family'] = 'any'
@@ -767,7 +767,7 @@ default['stig']['sshd_config']['address_family'] = 'any'
 # If	port is	not specified, sshd will listen	on the address and all
 # Port options specified.  The default is to	listen on all local
 # addresses.	 Multiple ListenAddress	options	are permitted.
-default['stig']['sshd_config']['listen_address'] = %w(0.0.0.0)
+default['stig']['sshd_config']['listen_address'] = %w[0.0.0.0]
 
 # Specifies the protocol versions sshd supports. (String), Default: 2
 default['stig']['sshd_config']['protocol'] = '2'

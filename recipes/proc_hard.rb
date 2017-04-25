@@ -14,12 +14,12 @@ end
 
 package 'apport' do
   action :remove
-  only_if { %w(debian ubuntu).include? node['platform'] }
+  only_if { %w[debian ubuntu].include? node['platform'] }
 end
 
 package 'whoopsie' do
   action :remove
-  only_if { %w(debian ubuntu).include? node['platform'] }
+  only_if { %w[debian ubuntu].include? node['platform'] }
 end
 
 include_recipe 'sysctl::apply'

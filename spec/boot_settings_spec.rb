@@ -20,7 +20,7 @@ describe 'stig::boot_settings CentOS 7.x' do
 
   it 'creates /selinux/enforce template' do
     allow(File).to receive(:directory?).and_call_original
-    allow(File).to receive(:directory?).with(anything).and_return(true)
+    allow(File).to receive(:directory?).with('/selinux').and_return(true)
     expect(chef_run).to create_template('/selinux/enforce')
     .with(
       source: 'selinux_enforce.erb',
@@ -122,7 +122,7 @@ describe 'stig::boot_settings CentOS 6.x' do
 
   it 'creates /selinux/enforce template' do
     allow(File).to receive(:directory?).and_call_original
-    allow(File).to receive(:directory?).with(anything).and_return(true)
+    allow(File).to receive(:directory?).with('/selinux').and_return(true)
     expect(chef_run).to create_template('/selinux/enforce')
     .with(
       source: 'selinux_enforce.erb',

@@ -35,9 +35,9 @@ mount '/run/shm' do
   fstype 'tmpfs'
   device 'none'
   options 'rw,nodev,nosuid,noexec'
-  action %i(mount enable)
+  action %i[mount enable]
   notifies :run, 'execute[remount]', :immediately
-  only_if { %w(debian ubuntu).include? platform }
+  only_if { %w[debian ubuntu].include? platform }
 end
 
 # The initial mount for whatever reason doesn't seem to mount
@@ -46,7 +46,7 @@ end
 execute 'remount' do
   command 'mount -o remount /run/shm'
   action :nothing
-  only_if { %w(debian ubuntu).include? platform }
+  only_if { %w[debian ubuntu].include? platform }
 end
 
 mount '/dev/shm' do
@@ -54,6 +54,6 @@ mount '/dev/shm' do
   device 'none'
   options 'nodev,nosuid,noexec'
   enabled true
-  action %i(mount enable)
-  only_if { %w(rhel fedora centos).include? platform }
+  action %i[mount enable]
+  only_if { %w[rhel fedora centos].include? platform }
 end

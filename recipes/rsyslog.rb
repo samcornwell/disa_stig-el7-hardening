@@ -11,11 +11,11 @@
 
 syslog_rules = node['stig']['logging']['rsyslog_rules']
 
-if %w(debian ubuntu).include?(node['platform'])
+if %w[debian ubuntu].include?(node['platform'])
   syslog_rules.concat(node['stig']['logging']['rsyslog_rules_debian'])
 end
 
-if %w(rhel fedora centos).include?(node['platform'])
+if %w[rhel fedora centos].include?(node['platform'])
   syslog_rules.concat(node['stig']['logging']['rsyslog_rules_rhel'])
 end
 

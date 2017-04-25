@@ -13,7 +13,7 @@ cookbook_file '/etc/pam.d/su for RHEL' do
   owner 'root'
   group 'root'
   mode 0o644
-  only_if { %w(rhel fedora centos rhel).include? node['platform'] }
+  only_if { %w[rhel fedora centos rhel].include? node['platform'] }
 end
 
 cookbook_file '/etc/pam.d/su for Debian' do
@@ -22,5 +22,5 @@ cookbook_file '/etc/pam.d/su for Debian' do
   owner 'root'
   group 'root'
   mode 0o644
-  only_if { %w(debian ubuntu).include? node['platform'] }
+  only_if { %w[debian ubuntu].include? node['platform'] }
 end

@@ -26,7 +26,7 @@
 # - Verify Permissions on /etc/group
 # - Verify User/Group Ownership on /etc/group
 
-%w(/etc/anacrontab /etc/crontab).each do |f|
+%w[/etc/anacrontab /etc/crontab].each do |f|
   file f do
     owner 'root'
     group 'root'
@@ -34,7 +34,7 @@
   end
 end
 
-%w(/etc/cron.hourly /etc/cron.daily /etc/cron.weekly /etc/cron.monthly /etc/cron.d).each do |d|
+%w[/etc/cron.hourly /etc/cron.daily /etc/cron.weekly /etc/cron.monthly /etc/cron.d].each do |d|
   directory d do
     owner 'root'
     group 'root'
@@ -42,7 +42,7 @@ end
   end
 end
 
-%w(/etc/shadow /etc/gshadow).each do |f|
+%w[/etc/shadow /etc/gshadow].each do |f|
   file f do
     owner 'root'
     group 'root'
@@ -50,7 +50,7 @@ end
   end
 end
 
-%w(/etc/passwd /etc/group).each do |f|
+%w[/etc/passwd /etc/group].each do |f|
   file f do
     owner 'root'
     group 'root'

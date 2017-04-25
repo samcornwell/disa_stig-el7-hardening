@@ -69,5 +69,5 @@ template '/etc/pam.d/common-password' do
   variables(
     pass_reuse_limit: pass_reuse_limit
   )
-  only_if { %w(debian ubuntu).include? platform }
+  only_if { %w[debian ubuntu].include? platform }
 end

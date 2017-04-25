@@ -27,13 +27,13 @@ execute 'aideinit' do
   user 'root'
   creates '/var/lib/aide/aide.db.new'
   action :run
-  only_if { %w(debian ubuntu).include? platform }
+  only_if { %w[debian ubuntu].include? platform }
 end
 
 remote_file '/var/lib/aide/aide.db' do
   user 'root'
   source 'file:///var/lib/aide/aide.db.new'
-  only_if { %w(debian ubuntu).include? platform }
+  only_if { %w[debian ubuntu].include? platform }
 end
 
 execute 'init_aide' do
@@ -41,7 +41,7 @@ execute 'init_aide' do
   command "/usr/sbin/aide --init -B 'database_out=file:/var/lib/aide/aide.db.gz'"
   creates '/var/lib/aide/aide.db.gz'
   action :run
-  only_if { %w(rhel fedora centos redhat).include? platform }
+  only_if { %w[rhel fedora centos redhat].include? platform }
 end
 
 cron 'aide_cron' do

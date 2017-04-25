@@ -9,7 +9,7 @@ end
 
 desc 'Clean some generated files'
 task :clean do
-  %w(
+  %w[
     Berksfile.lock
     .bundle
     .cache
@@ -18,7 +18,7 @@ task :clean do
     .kitchen
     metadata.json
     vendor
-  ).each { |f| FileUtils.rm_rf(Dir.glob(f)) }
+  ].each { |f| FileUtils.rm_rf(Dir.glob(f)) }
 end
 
 desc 'Run ChefSpec/Rspec unit tests'
@@ -41,4 +41,4 @@ namespace :style do
 end
 
 desc 'Run all style checks'
-task style: %w(style:chef style:ruby)
+task style: %w[style:chef style:ruby]

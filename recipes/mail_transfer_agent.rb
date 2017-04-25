@@ -10,11 +10,11 @@
 # Ubuntu 6.15
 
 source = ''
-if %w(rhel fedora centos).include?(node['platform'])
+if %w[rhel fedora centos].include?(node['platform'])
   source = 'etc_main.cf_rhel.erb'
 end
 
-if %w(debian ubuntu).include?(node['platform'])
+if %w[debian ubuntu].include?(node['platform'])
   source = 'etc_main.cf_ubuntu.erb'
 end
 
