@@ -4,7 +4,7 @@
 # Description: Add this recipe in your cookbook and pass in
 # attributes for rule sets or use the defaults below
 
-template '/etc/audit/audit.rules' do
+template '/etc/audit/rules.d/audit.rules' do
   source 'audit_rules.erb'
   mode '0640'
   owner 'root'
@@ -12,5 +12,5 @@ template '/etc/audit/audit.rules' do
   variables(buffer: node['stig']['auditd']['buffer'],
             failure_mode: node['stig']['auditd']['failure_mode'],
             rules: node['stig']['auditd']['rules'])
-  notifies :reload, 'service[auditd]', :immediately
+  notifies :restart, 'service[auditd]', :immediately
 end

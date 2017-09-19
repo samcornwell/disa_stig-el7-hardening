@@ -1,3 +1,7 @@
+<%
+  platforms = %w(centos-7 centos-6)
+  use_git = false
+%>
 ---
 driver:
   name: vagrant
@@ -7,19 +11,26 @@ provisioner:
 
 verifier:
   name: inspec
+  sudo: true
+  sudo_options: '-u root'
+  format: json
+  output: hardenedrhel7.json
 
 platforms:
-  - name: centos-6.8
-  - name: centos-7.3
+<% platforms.each do |plat| %>
+- name: <%= plat %>
+  verifier:
+      inspec_tests:
+      - name: <%= plat %>
+      <% if use_git == false %>
+        path: ../../auditd_rules_test/inspec_profiles/profiles/disa_stig-rhel7-baseline
+      <% else %>
+        git: https://github.com/jburns12/inspec_profiles/tree/master_original/profiles/disa_stig-rhel7-baseline
+      <% end %>
+<% end %>
 
 suites:
-  - name: centos7
-    excludes:
-      - centos-6.8
-    verifier:
-      inspec_tests:
-          - name: centos7
-            path: test/integration/centos7/inspec
+  - name: default
     run_list:
       - recipe[auditd]
       - recipe[stig::auditd]
@@ -45,46 +56,6 @@ suites:
       - recipe[stig::audit_scripts]
       - recipe[stig::su_restriction]
       - recipe[stig::aide]
-    attributes: {
-      "auditd" : {
+    attributes:
+      "auditd" :
         "ruleset" : "stig"
-      }
-    }
-
-  - name: centos6
-    excludes:
-      - centos-7.3
-    verifier:
-      inspec_tests:
-          - name: centos6
-            path: test/integration/centos6/inspec
-    run_list:
-      - recipe[auditd]
-      - recipe[stig::auditd]
-      - recipe[stig::auditd_rules]
-      - recipe[stig::fstab_tmp]
-      - recipe[stig::tcp_wrappers]
-      - recipe[stig::boot_settings]
-      - recipe[stig::proc_hard]
-      - recipe[stig::cis]
-      - recipe[stig::avahi_daemon]
-      - recipe[stig::ipv6]
-      - recipe[stig::dhcp]
-      - recipe[stig::mail_transfer_agent]
-      - recipe[stig::hosts]
-      - recipe[stig::rsyslog]
-      - recipe[logrotate::global]
-      - recipe[stig::sshd_config]
-      - recipe[stig::system_auth]
-      - recipe[stig::login_defs]
-      - recipe[stig::login_banner]
-      - recipe[stig::file_permissions]
-      - recipe[stig::audits]
-      - recipe[stig::audit_scripts]
-      - recipe[stig::su_restriction]
-      - recipe[stig::aide]
-    attributes: {
-      "auditd" : {
-        "ruleset" : "stig"
-      }
-    }
