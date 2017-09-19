@@ -13,7 +13,8 @@ describe 'stig::mail_transfer_agent CentOS 7.x' do
   end
 
   it 'excludes postfix service due to :nothing guard' do
-    expect(chef_run).to_not start_service('postfix')
+    postfix_service = chef_run.service('postfix')
+    expect(postfix_service).to do_nothing
   end
 end
 

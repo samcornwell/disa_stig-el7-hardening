@@ -20,15 +20,11 @@ describe 'stig::audits CentOS 7.x' do
   end
 
   before do
-    stub_command("test -n \"$(df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type f -perm -0002)\"").and_return(true)
+    stub_command("test -n \"$(df --local -P | awk {'if (NR!=1) print $6'} | uniq | xargs -I '{}' find '{}' -xdev -type f -perm -0002)\"").and_return(true)
   end
 
   before do
-    stub_command("test -n \"$(df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -nouser -ls)\"").and_return(true)
-  end
-
-  before do
-    stub_command("test -n \"$(df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -nogroup -ls)\"").and_return(true)
+    stub_command("test -n \"$(df --local -P | awk {'if (NR!=1) print $6'} | uniq | xargs -I '{}' find '{}' -xdev -nouser -nogroup -ls)\"").and_return(true)
   end
 
   before do
@@ -66,21 +62,14 @@ describe 'stig::audits CentOS 7.x' do
   it 'checks for world writable files' do
     expect(chef_run).to run_bash('remove_world_writable_flag_from_files').with(
       user: 'root',
-      code: "for fn in $(df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type f -perm -0002);do chmod o-w $fn;done"
+      code: "for fn in $(df --local -P | awk {'if (NR!=1) print $6'} | uniq | xargs -I '{}' find '{}' -xdev -type f -perm -0002);do chmod o-w $fn;done"
     )
   end
 
   it 'checks for unowned files and directories' do
-    expect(chef_run).to run_bash('reclaim_ownership_of_orphaned_files_and_dirs').with(
+    expect(chef_run).to run_bash('find user and group orphaned files and directories').with(
       user: 'root',
-      code: "for fn in $(df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -nouser -ls | awk '{ printf $11\"\\n\" }'); do chown root:root $fn;done"
-    )
-  end
-
-  it 'checks for group unowned files and directories' do
-    expect(chef_run).to run_bash('find group orphaned files and directories').with(
-      user: 'root',
-      code: "for fn in $(df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -nogroup -ls | awk '{ printf $11\"\\n\" }'); do chown root:root $fn;done"
+      code: "for fn in $(df --local -P | awk {'if (NR!=1) print $6'} | uniq | xargs -I '{}' find '{}' -xdev -nouser -nogroup -ls | awk '{ printf $11\"\\n\" }'); do chown root:root $fn;done"
     )
   end
 
@@ -112,15 +101,11 @@ describe 'stig::audits CentOS 6.x' do
   end
 
   before do
-    stub_command("test -n \"$(df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type f -perm -0002)\"").and_return(true)
+    stub_command("test -n \"$(df --local -P | awk {'if (NR!=1) print $6'} | uniq | xargs -I '{}' find '{}' -xdev -type f -perm -0002)\"").and_return(true)
   end
 
   before do
-    stub_command("test -n \"$(df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -nouser -ls)\"").and_return(true)
-  end
-
-  before do
-    stub_command("test -n \"$(df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -nogroup -ls)\"").and_return(true)
+    stub_command("test -n \"$(df --local -P | awk {'if (NR!=1) print $6'} | uniq | xargs -I '{}' find '{}' -xdev -nouser -nogroup -ls)\"").and_return(true)
   end
 
   before do
@@ -158,21 +143,14 @@ describe 'stig::audits CentOS 6.x' do
   it 'checks for world writable files' do
     expect(chef_run).to run_bash('remove_world_writable_flag_from_files').with(
       user: 'root',
-      code: "for fn in $(df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type f -perm -0002);do chmod o-w $fn;done"
+      code: "for fn in $(df --local -P | awk {'if (NR!=1) print $6'} | uniq | xargs -I '{}' find '{}' -xdev -type f -perm -0002);do chmod o-w $fn;done"
     )
   end
 
   it 'checks for unowned files and directories' do
-    expect(chef_run).to run_bash('reclaim_ownership_of_orphaned_files_and_dirs').with(
+    expect(chef_run).to run_bash('find user and group orphaned files and directories').with(
       user: 'root',
-      code: "for fn in $(df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -nouser -ls | awk '{ printf $11\"\\n\" }'); do chown root:root $fn;done"
-    )
-  end
-
-  it 'checks for group unowned files and directories' do
-    expect(chef_run).to run_bash('find group orphaned files and directories').with(
-      user: 'root',
-      code: "for fn in $(df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -nogroup -ls | awk '{ printf $11\"\\n\" }'); do chown root:root $fn;done"
+      code: "for fn in $(df --local -P | awk {'if (NR!=1) print $6'} | uniq | xargs -I '{}' find '{}' -xdev -nouser -nogroup -ls | awk '{ printf $11\"\\n\" }'); do chown root:root $fn;done"
     )
   end
 

@@ -58,7 +58,8 @@ describe 'stig::ipv6 CentOS 7.x' do
   end
 
   it 'Executes start_ip6tables' do
-    expect(chef_run).to_not run_execute("systemctl start ip6tables")
+    exec_start_ip6tables = chef_run.execute('systemctl start ip6tables')
+    expect(exec_start_ip6tables).to do_nothing
   end
 end
 

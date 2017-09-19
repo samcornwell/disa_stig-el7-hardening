@@ -40,5 +40,5 @@ end
 
 package 'avahi-daemon' do
   action :purge
-  only_if { %w[debian ubuntu redhat].include? platform }
+  only_if { %w[debian ubuntu].include? platform }
 end

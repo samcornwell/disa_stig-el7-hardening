@@ -13,21 +13,13 @@ describe 'stig::dhcp CentOS 7.x' do
   end
 
   it 'does not create /etc/init/isc-dhcp-server.conf template on CentOS' do
-    expect(chef_run).to_not create_template('/etc/init/isc-dhcp-server.conf')
-    .with(
-      source: 'etc_init_isc-dhcp-server.conf.erb',
-      owner: 'root',
-      group: 'root'
-    )
+    dhcp_template = chef_run.template('/etc/init/isc-dhcp-server.conf')
+    expect(dhcp_template).to do_nothing
   end
 
   it 'does not create /etc/init/isc-dhcp-server6.conf template on CentOS' do
-    expect(chef_run).to_not create_template('/etc/init/isc-dhcp-server6.conf')
-    .with(
-      source: 'etc_init_isc-dhcp-server6.conf.erb',
-      owner: 'root',
-      group: 'root'
-    )
+    dhcp6_template = chef_run.template('/etc/init/isc-dhcp-server6.conf')
+    expect(dhcp6_template).to do_nothing
   end
 
   it 'Disable dhcpd via sysctl' do

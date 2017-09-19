@@ -1,5 +1,8 @@
 STIG Cookbook
 =============
+
+[![Build Status](https://travis-ci.org/USGS-CIDA/stig.svg?branch=master)](https://travis-ci.org/USGS-CIDA/stig)
+
 Installs and configures the CIS CentOS Linux 6 benchmark.  
 These sets of recipes aim to harden the operating system in order to pass all scored CIS benchmarks and optionally all unscored CIS benchmarks.
 
@@ -25,6 +28,25 @@ Attributes
 - `node['stig']['grub']['hashedpassword']` = The hashed grub password to use. Ex: openssl passwd -1 ChangeMe (String (MD5 Hash))
 
 - `node['stig']['limits']` = A hash of items that go into /etc/security/limits.conf (Array of Hashes of Hashes)
+
+- `node['stig']['aide']['config_file']` = (String) Specifies the location of the AIDE configuration file. Default: '/etc/aide.conf'
+
+- `node['stig']['aide']['dbdir']` = (String) Defines the DBDIR macro that is used set the location of the database. Default: '/var/lib/aide'
+
+- `node['stig']['aide']['logdir']` = (String) Defines the LOGDIR macro that is used set the location of the AIDE log file. Default: '/var/log/aide'
+
+- `node['stig']['aide']['database']` = (String) Specifies the location of the database to read. Default: 'file:@@{DBDIR}/aide.db.gz'
+
+- `node['stig']['aide']['database_out']` = (String) Specifies the location of the database to be created/updated. Default: 'file:@@{DBDIR}/aide.db.new.gz'
+
+- `node['stig']['aide']['gzip_dbout']` = (Boolean) Specifies whether the database is gzipped when created/updated. Default: true
+
+- `node['stig']['aide']['verbose']` = (Integer 0-255) Specifies the level of the messages that are written out. Default: 5
+
+- `node['stig']['aide']['report_url']` = (Array of Strings) Specifies where the output is sent. Default: [ 'file:@@{LOGDIR}/aide.log', 'stdout' ]
+- `node['stig']['aide']['rules']` = (Hash) Defines additional rules to be used. The hash entry is in the form of Rule Name => definition. Default: See https://github.com/USGS-CIDA/stig/blob/master/attributes/default.rb]
+
+- `node['stig']['aide']['paths']` = (Hash) Defines additional paths to add to the database along with the rules to apply to that path. The hash entry is in the form of path => rule. If rule is '!', then the entry is written to aide.conf as '!path'. Default: See https://github.com/USGS-CIDA/stig/blob/master/attributes/default.rb
 
 - `node['stig']['auditd']` = See: [Auditd Configuration](http://linux.die.net/man/5/auditd.conf)
 

@@ -51,7 +51,8 @@ describe file('/etc/audit/audit.rules') do
   its('content') { should include('-w /sbin/insmod -p x -k modules') }
   its('content') { should include('-w /sbin/rmmod -p x -k modules') }
   its('content') { should include('-w /sbin/modprobe -p x -k modules') }
-  its('content') { should include('-a always,exit arch=b64 -S init_module -S delete_module -k modules') }
+  its('content') { should include('-a always,exit -F arch=b64 -S init_module -S delete_module -k modules') }
+  its('content') { should include('-a always,exit -F arch=b32 -S init_module -S delete_module -k modules') }
   its('content') { should include('-b 8192') }
   its('content') { should include('-f 1') }
   its('content') { should include('-D') }

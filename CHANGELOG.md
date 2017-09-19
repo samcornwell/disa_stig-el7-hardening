@@ -1,6 +1,30 @@
 ## Changelog
 ---------
 
+- 0.6.10
+
+-- [jmorris@usgs.gov] - Added template for /etc/aide.conf and it updates the aide database
+-- [jmorris@usgs.gov] - Added default attributes for Centos 6 & 7 for /etc/aide.conf
+-- [jmorris@usgs.gov] - Added inspec and unit tests for /etc/aide.conf
+-- [jmorris@usgs.gov] - Corrected inspec tests centos7 to run aide tests for redhat platforms
+
+- 0.6.9
+
+-- [isuftin@usgs.gov] - Updated more audit not included in the last version
+-- [isuftin@usgs.gov] - Combined two audit steps into one to save time/processing
+
+- 0.6.8
+
+-- [isuftin@usgs.gov] - Updated audit scripts to not double-check file mounts that
+may appear twice in df output
+
+- 0.6.7
+
+-- [jmorris@usgs.gov] - Updated defaults for audit.rules to avoid 32/64 bit syscall mismatch warning
+-- [jmorris@usgs.gov] - Removed "redhat" from the test for purging the avahi-daemon package
+-- [jmorris@usgs.gov] - Updated unit tests to work around errors
+-- [jmorris@usgs.gov] - Updated style tests for later version of foodcritic/rubocop
+
 - 0.6.6
 
 -- [isuftin@usgs.gov] - Updating the cookbook to work properly with CentOS 7

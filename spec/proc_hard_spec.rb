@@ -17,11 +17,13 @@ describe 'stig::proc_hard CentOS 7.x' do
   end
 
   it 'does not remove apport package on RHEL' do
-    expect(chef_run).to_not remove_package('apport')
+    yum_pkg = chef_run.package('apport')
+    expect(yum_pkg).to do_nothing
   end
 
   it 'does not remove whoopsie package on RHEL' do
-    expect(chef_run).to_not remove_package('whoopsie')
+    yum_pkg = chef_run.package('whoopsie')
+    expect(yum_pkg).to do_nothing
   end
 
 end

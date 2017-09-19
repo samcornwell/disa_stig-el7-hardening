@@ -24,11 +24,13 @@ describe 'stig::fstab_tmp CentOS 7.x' do
   end
 
   it 'Does not mount at /run/shm on RHEL' do
-    expect(chef_run).to_not mount_mount('/run/shm')
+    mountp = chef_run.mount('/run/shm')
+    expect(mountp).to do_nothing
   end
 
   it 'Does not execute remount of /run/shm on RHEL' do
-    expect(chef_run).to_not run_execute("mount -o remount /run/shm")
+    exec_remount = chef_run.execute('mount -o remount /run/shm')
+    expect(exec_remount).to do_nothing
   end
 end
 

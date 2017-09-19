@@ -13,7 +13,8 @@ describe 'stig::rsyslog CentOS 7.x' do
   end
 
   it 'excludes restart_syslog execution due to :nothing guard' do
-    expect(chef_run).to_not run_execute('restart_syslog')
+    exec_restart_syslog = chef_run.execute('restart_syslog')
+    expect(exec_restart_syslog).to do_nothing
   end
 end
 

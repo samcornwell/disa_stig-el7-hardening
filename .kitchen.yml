@@ -25,7 +25,6 @@ suites:
       - recipe[stig::auditd]
       - recipe[stig::auditd_rules]
       - recipe[stig::fstab_tmp]
-      - recipe[stig::aide]
       - recipe[stig::tcp_wrappers]
       - recipe[stig::boot_settings]
       - recipe[stig::proc_hard]
@@ -45,6 +44,7 @@ suites:
       - recipe[stig::audits]
       - recipe[stig::audit_scripts]
       - recipe[stig::su_restriction]
+      - recipe[stig::aide]
     attributes: {
       "auditd" : {
         "ruleset" : "stig"
@@ -63,7 +63,6 @@ suites:
       - recipe[stig::auditd]
       - recipe[stig::auditd_rules]
       - recipe[stig::fstab_tmp]
-      - recipe[stig::aide]
       - recipe[stig::tcp_wrappers]
       - recipe[stig::boot_settings]
       - recipe[stig::proc_hard]
@@ -83,6 +82,7 @@ suites:
       - recipe[stig::audits]
       - recipe[stig::audit_scripts]
       - recipe[stig::su_restriction]
+      - recipe[stig::aide]
     attributes: {
       "auditd" : {
         "ruleset" : "stig"

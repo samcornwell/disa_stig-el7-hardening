@@ -15,7 +15,8 @@ describe 'stig::avahi_daemon CentOS 7.x' do
   end
 
   it 'not install the avahi-daemon package' do
-    expect(chef_run).to_not install_package('avahi-daemon')
+    yum_pkg = chef_run.package('avahi-daemon')
+    expect(yum_pkg).to do_nothing
   end
 
   it 'Does not execute chkconfig to turn off avahi-daemon' do
