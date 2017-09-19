@@ -16,3 +16,5 @@ chef_version '>= 12.0.0'
 
 depends			 'logrotate'
 depends			 'sysctl'
+
+chef_version '~> 13.0.0' if respond_to?(:chef_version)
