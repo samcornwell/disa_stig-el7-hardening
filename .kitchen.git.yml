@@ -22,7 +22,7 @@ platforms:
       <% if use_git == false %>
         path: test/integration/<%= plat %>/inspec
       <% else %>
-        url: https://github.com/jburns12/inspec_profiles/tree/master_original/profiles/disa_stig-rhel7-baseline
+        git: https://github.com/simp/inspec-profile-disa_stig-el7.git
       <% end %>
 <% end %>
 
