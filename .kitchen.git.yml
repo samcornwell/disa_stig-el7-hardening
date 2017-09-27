@@ -12,6 +12,8 @@ provisioner:
 verifier:
   name: inspec
   sudo: true
+  format: json
+  output: hardenedrhel7.json
 
 platforms:
 <% platforms.each do |plat| %>
@@ -22,7 +24,7 @@ platforms:
       <% if use_git == false %>
         path: test/integration/<%= plat %>/inspec
       <% else %>
-        git: https://github.com/simp/inspec-profile-disa_stig-el7.git
+        git: https://github.com/jburns12/inspec-profile-disa_stig-el7.git
       <% end %>
 <% end %>
 
@@ -53,6 +55,7 @@ suites:
       - recipe[stig::audit_scripts]
       - recipe[stig::su_restriction]
       - recipe[stig::aide]
+      - recipe[stig::screen]
     attributes:
       "auditd" :
         "ruleset" : "stig"

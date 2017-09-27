@@ -108,3 +108,6 @@ include_recipe 'stig::audit_scripts'
 
 # CENTOS6: 6.5
 include_recipe 'stig::su_restriction'
+
+# RHEL7
+include_recipe 'stig::screen'
