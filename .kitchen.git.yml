@@ -59,3 +59,7 @@ suites:
     attributes:
       "auditd" :
         "ruleset" : "stig"
+
+  - name: vanilla
+    run_list:
+ 
