@@ -1,6 +1,11 @@
 ## Changelog
 ---------
 
+- 0.6.11
+
+-- [isuftin@usgs.gov] - Due to a change in the Chef client @ 13.7.16, the aide
+recipe needed to be updated. Also updated Rubocop, Chefspec and Foodcritic issues
+
 - 0.6.10
 
 -- [jmorris@usgs.gov] - Added template for /etc/aide.conf and it updates the aide database

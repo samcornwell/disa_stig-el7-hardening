@@ -12,9 +12,8 @@
 platform = node['platform']
 major_version = node['platform_version'][0, 1].to_i
 
-package 'dhcp' do
+rpm_package 'dhcp' do
   action :remove
-  provider Chef::Provider::Package::Rpm
   only_if { %w[rhel fedora centos redhat].include? platform }
 end
 
