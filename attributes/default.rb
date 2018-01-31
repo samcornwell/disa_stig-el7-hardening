@@ -557,39 +557,39 @@ default['stig']['logging']['rsyslog_rules_debian'] = [
 # Configure logrotate
 default['logrotate']['global']['/var/log/cron'] = {
   'sharedscripts' => 'true',
-  'postrotate' => <<-EOF
+  'postrotate' => <<-LOGROTATE
   /bin/kill -HUP `cat /var/run/syslogd.pid 2> /dev/null` 2> /dev/null || true
-  EOF
+  LOGROTATE
 }
 default['logrotate']['global']['/var/log/maillog'] = {
   'sharedscripts' => 'true',
-  'postrotate' => <<-EOF
+  'postrotate' => <<-LOGROTATE
   /bin/kill -HUP `cat /var/run/syslogd.pid 2> /dev/null` 2> /dev/null || true
-  EOF
+  LOGROTATE
 }
 default['logrotate']['global']['/var/log/messages'] = {
   'sharedscripts' => 'true',
-  'postrotate' => <<-EOF
+  'postrotate' => <<-LOGROTATE
   /bin/kill -HUP `cat /var/run/syslogd.pid 2> /dev/null` 2> /dev/null || true
-  EOF
+  LOGROTATE
 }
 default['logrotate']['global']['/var/log/secure'] = {
   'sharedscripts' => 'true',
-  'postrotate' => <<-EOF
+  'postrotate' => <<-LOGROTATE
   /bin/kill -HUP `cat /var/run/syslogd.pid 2> /dev/null` 2> /dev/null || true
-  EOF
+  LOGROTATE
 }
 default['logrotate']['global']['/var/log/spooler'] = {
   'sharedscripts' => 'true',
-  'postrotate' => <<-EOF
+  'postrotate' => <<-LOGROTATE
   /bin/kill -HUP `cat /var/run/syslogd.pid 2> /dev/null` 2> /dev/null || true
-  EOF
+  LOGROTATE
 }
 default['logrotate']['global']['/var/log/spooler'] = {
   'sharedscripts' => 'true',
-  'postrotate' => <<-EOF
+  'postrotate' => <<-LOGROTATE
   /bin/kill -HUP `cat /var/run/syslogd.pid 2> /dev/null` 2> /dev/null || true
-  EOF
+  LOGROTATE
 }
 
 # By default, SELinux is enabled. However, there may be reasons to shut it off

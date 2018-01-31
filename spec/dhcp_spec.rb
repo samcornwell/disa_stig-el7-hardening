@@ -9,7 +9,7 @@ describe 'stig::dhcp CentOS 7.x' do
   end
 
   it 'removes DHCP' do
-    expect(chef_run).to remove_package('dhcp')
+    expect(chef_run).to remove_rpm_package('dhcp')
   end
 
   it 'does not create /etc/init/isc-dhcp-server.conf template on CentOS' do
@@ -40,7 +40,7 @@ describe 'stig::dhcp CentOS 6.x' do
   end
 
   it 'removes DHCP' do
-    expect(chef_run).to remove_package('dhcp')
+    expect(chef_run).to remove_rpm_package('dhcp')
   end
 
   it 'does not create /etc/init/isc-dhcp-server.conf template on CentOS' do
