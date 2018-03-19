@@ -3,7 +3,7 @@
 # Author: Ivan Suftin <isuftin@usgs.gov>
 #
 # Description: Configure Sysauth and password-auth
-# TODO: Re-add cracklib.so settings for CentOS 6.x
+# TODO: Re-add cracklib.so settings for CentOS 6.x <-- cracklib replaced by pwquality
 
 require 'pathname'
 
@@ -70,4 +70,44 @@ template '/etc/pam.d/common-password' do
     pass_reuse_limit: pass_reuse_limit
   )
   only_if { %w[debian ubuntu].include? platform }
+end
+
+template '/etc/security/pwquality.conf' do
+  source 'etc_security_pwquality.conf.erb'
+  owner 'root'
+  group 'root'
+  mode 0o644
+  variables(
+    pwquality_rules: node['stig']['pam_d']['config']['pwquality_conf']
+  )
+end
+
+template '/etc/pam.d/passwd' do
+  source 'etc_pam.d_passwd.erb'
+  owner 'root'
+  group 'root'
+  mode 0o644
+  variables(
+    passwd_rules: node['stig']['pam_d']['config']['passwd_rules']
+  )
+end
+
+template '/etc/pam.d/sssd-shadowutils' do
+  source 'etc_pam.d_sssd-shadowutils.erb'
+  owner 'root'
+  group 'root'
+  mode 0o644
+  variables(
+    sssd_shadowutils_rules: node['stig']['pam_d']['config']['sssd_shadowutils_rules']
+  )
+end
+
+template '/etc/pam.d/postlogin-ac' do
+  source 'etc_pam.d_postlogin-ac.erb'
+  owner 'root'
+  group 'root'
+  mode 0o644
+  variables(
+    postlogin_ac_rules: node['stig']['pam_d']['config']['postlogin_ac_rules']
+  )
 end

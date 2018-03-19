@@ -28,10 +28,14 @@ MAIL_DIR        /var/spool/mail
 #       PASS_MIN_LEN    Minimum acceptable password length.
 #       PASS_WARN_AGE   Number of days warning given before a password expires.
 #
-PASS_MAX_DAYS   <%= @pass_max_days %>
-PASS_MIN_DAYS   <%= @pass_min_days %>
-PASS_MIN_LEN    5
-PASS_WARN_AGE   <%= @pass_warn_age%>
+PASS_MAX_DAYS   <%= @pass_max_days   %>
+PASS_MIN_DAYS   <%= @pass_min_days   %>
+PASS_MIN_LEN    <%= @pass_min_length %>
+PASS_WARN_AGE   <%= @pass_warn_age   %>
+
+#Configure the operating system to enforce a delay of at least four
+#seconds between logon prompts following a failed console logon attempt.
+FAIL_DELAY <%= @fail_delay %>
 
 #
 # Min/max values for automatic uid selection in useradd
@@ -61,7 +65,7 @@ CREATE_HOME     yes
 
 # The permission mask is initialized to this value. If not specified,
 # the permission mask will be initialized to 022.
-UMASK           077
+UMASK           <%= @umask   %>
 
 # This enables userdel to remove user groups if no members exist.
 #
@@ -69,3 +73,8 @@ USERGROUPS_ENAB yes
 
 # Use SHA512 to encrypt password.
 ENCRYPT_METHOD SHA512
+
+# Indicate if passwords must be encrypted using the MD5-based algorithm.
+# This variable is superseded by the ENCRYPT_METHOD variable or by any
+# command line option used to configure the encryption algorithm.
+MD5_CRYPT_ENAB no

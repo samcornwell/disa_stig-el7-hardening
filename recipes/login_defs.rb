@@ -12,6 +12,10 @@
 # - Set Password Expiration Days
 # - Set Password Change Minimum Number of Days
 # - Set Password Expiring Warning Days
+#
+# CIS Benchmark v2.2.0
+# RHEL 7: 5.4.1.4 Ensure inactive password lock is 30 days or less (Scored)
+
 
 template '/etc/login.defs' do
   source 'etc_login.defs.erb'
@@ -21,6 +25,25 @@ template '/etc/login.defs' do
   variables(
     pass_max_days: node['stig']['login_defs']['pass_max_days'],
     pass_min_days: node['stig']['login_defs']['pass_min_days'],
-    pass_warn_age: node['stig']['login_defs']['pass_warn_age']
+    pass_min_length: node['stig']['login_defs']['pass_min_length'],
+	pass_warn_age: node['stig']['login_defs']['pass_warn_age'],
+	umask: node['stig']['login_defs']['umask'],
+	fail_delay: node['stig']['login_defs']['fail_delay']
   )
+end
+
+template '/etc/default/useradd' do
+  source 'etc_default_useradd.erb'
+  owner 'root'
+  group 'root'
+  mode 0o600
+  variables(
+	inactive_days: node['stig']['login_defs']['inactive_days']
+  )
+end
+
+execute "Check for INACTIVE Days Setting" do
+  command "useradd -D --inactive #{node['stig']['login_defs']['inactive_days']}"
+# Only run if INACTIVE=node['stig']['login_defs']['inactive_days'] is NOT Set
+  not_if %Q{useradd -D | grep INACTIVE=#{node['stig']['login_defs']['inactive_days']}}
 end

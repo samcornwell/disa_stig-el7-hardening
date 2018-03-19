@@ -11,6 +11,11 @@ default['stig']['limits'] = [
     '*' => {
       'hard' => 'core 0'
     }
+  },
+    {
+    '*' => {
+      'hard' => 'maxlogins 10'
+    }
   }
 ]
 
@@ -307,7 +312,7 @@ default['stig']['auditd']['dispatcher'] = '/sbin/audispd'
 default['stig']['auditd']['name_format'] = 'NONE'
 default['stig']['auditd']['max_log_file'] = '25'
 default['stig']['auditd']['max_log_file_action'] = 'keep_logs'
-default['stig']['auditd']['space_left'] = '75'
+default['stig']['auditd']['space_left'] = '768'
 default['stig']['auditd']['space_left_action'] = 'email'
 default['stig']['auditd']['action_mail_acct'] = 'root'
 default['stig']['auditd']['admin_space_left'] = '50'
@@ -323,6 +328,19 @@ default['stig']['auditd']['enable_krb5'] = 'no'
 default['stig']['auditd']['krb5_principal'] = 'auditd'
 default['stig']['auditd']['krb5_key_file'] = ''
 default['stig']['auditd']['distribute_network'] = 'no'
+
+default['stig']['auditd']['config']['audisp_remote_rules'] = [
+#   Taking appropriate action in case of a filled audit storage volume will
+#   minimize the possibility of losing audit records.
+   'disk_full_action = syslog', 		# V-72087
+   'network_failure_action = syslog',	# V-72087
+#   The operating system must off-load audit records onto a different system or
+#   media from the system being audited.
+   'remote_server = 127.0.0.1',			# V-72083
+#   The operating system must encrypt the transfer of audit records off-loaded
+#   onto a different system or media from the system being audited.
+   'enable_krb5 = yes'					# V-72085
+]
 
 # Specific to creating ruleset
 default['stig']['auditd']['buffer'] = '8192'
@@ -400,7 +418,41 @@ default['stig']['auditd']['rules'] = [
   '-w /var/log/tallylog -p wa -k logins',
   '-w /var/run/faillock -p wa -k logins',
   '-a always,exit -F arch=b64 -S init_module -S delete_module -k modules',
-  '-a always,exit -F arch=b32 -S init_module -S delete_module -k modules'
+  '-a always,exit -F arch=b32 -S init_module -S delete_module -k modules',
+  ## Extra Audit Rules found by Chef Compliance / INSPEC
+  ##  V-72095: All privileged function executions must be audited.
+  '-a always,exit -F path=/usr/bin/wall -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  '-a always,exit -F path=/usr/bin/chage -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  '-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  '-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  '-a always,exit -F path=/usr/bin/chfn -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  '-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  '-a always,exit -F path=/usr/bin/mount -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  '-a always,exit -F path=/usr/bin/umount -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  '-a always,exit -F path=/usr/bin/su -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  '-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  '-a always,exit -F path=/usr/bin/write -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  '-a always,exit -F path=/usr/bin/pkexec -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  '-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  '-a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  '-a always,exit -F path=/usr/bin/screen -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  '-a always,exit -F path=/usr/sbin/pam_timestamp_check -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  '-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  '-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  '-a always,exit -F path=/usr/sbin/netreport -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  '-a always,exit -F path=/usr/sbin/usernetctl -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  '-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  '-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  '-a always,exit -F path=/usr/lib/polkit-1/polkit-agent-helper-1 -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  '-a always,exit -F path=/usr/lib64/dbus-1/dbus-daemon-launch-helper -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  '-a always,exit -F path=/usr/libexec/utempter/utempter -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  '-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  '-a always,exit -F path=/usr/libexec/sssd/krb5_child -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  '-a always,exit -F path=/usr/libexec/sssd/ldap_child -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  '-a always,exit -F path=/usr/libexec/sssd/selinux_child -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  '-a always,exit -F path=/usr/libexec/sssd/proxy_child -F perm=x -F auid>=1000 -F auid!=4294967295 -k setuid/setgid',
+  ## V-72157: All uses of the userhelper command must be audited.
+  '-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged-passwd'
 ]
 
 # Removing support for unneeded filesystem types
@@ -504,39 +556,64 @@ default['stig']['network']['disable_rds'] = true
 # false = enable
 default['stig']['network']['disable_tipc'] = true
 
+# Disable USB Storage
+# true = disable
+# false = enable
+default["stig"]["mount_disable"]["disable_usb_storage"] = true
+
 # Disable IPv6
 # no = disabled
 # yes = enabled
 default['stig']['network']['ipv6'] = 'no'
 
+
+
 # Configure /etc/rsyslog.conf
+default['stig']['logging']['rsyslog_queue_rules'] = [
+	'$WorkDirectory /var/lib/rsyslog # where to place spool files',
+	'$ActionQueueFileName logfwdRule1 # unique name prefix for spool files',
+	'$ActionQueueMaxDiskSpace 1g   # 1gb space limit (use as much as possible)',
+	'$ActionQueueSaveOnShutdown on # save messages to disk on shutdown',
+	'$ActionQueueType LinkedList   # run asynchronously',
+	'$ActionResumeRetryCount -1    # infinite retries if host is down'
+]
 # Include rules for logging in array with space separating rule with log location
 default['stig']['logging']['rsyslog_rules'] = []
 default['stig']['logging']['rsyslog_rules_rhel'] = [
-  '*.info;mail.none;authpriv.none;cron.none   /var/log/messages',
-  'authpriv.*   /var/log/secure',
-  'mail.*   -/var/log/maillog',
-  'cron.*   /var/log/cron',
-  '*.emerg   *',
-  'uucp,news.crit   /var/log/spooler',
-  'local7.*    /var/log/boot.log',
-  '$FileCreateMode 0640',
-  '*.emerg :omusrmsg:*',
-  'mail.* -/var/log/mail',
-  'mail.info -/var/log/mail.info',
-  'mail.warning -/var/log/mail.warn',
-  'mail.err /var/log/mail.err',
-  'news.crit -/var/log/news/news.crit',
-  'news.err -/var/log/news/news.err',
-  'news.notice -/var/log/news/news.notice',
-  '*.=warning;*.=err -/var/log/warn',
-  '*.crit /var/log/warn',
-  '*.*;mail.none;news.none -/var/log/messages',
-  'local0,local1.* -/var/log/localmessages',
-  'local2,local3.* -/var/log/localmessages',
-  'local4,local5.* -/var/log/localmessages',
-  'local6,local7.* -/var/log/localmessages'
+  '$FileCreateMode 0640'													,
+  '# Log all kernel messages to the console.'								,
+  '# Logging much else clutters up the screen.'                             ,
+  '#kern.*                                       /dev/console'              ,
+  '# Log anything (except mail) of level info or higher.'                   ,
+  '# Don not log private authentication messages!'                          ,
+  '*.info;mail.none;authpriv.none;cron.none      /var/log/messages'         ,
+  '# The authpriv file has restricted access.'                              ,
+  'authpriv.*                                    /var/log/secure'           ,
+  '# Log cron stuff'                                                        ,
+  'cron.*                                        /var/log/cron'             ,
+  '# Everybody gets emergency messages'                                     ,
+  '*.emerg    									 :omusrmsg:*'                        ,
+  '# Log all the mail messages in one place.'                               ,
+  'mail.*   									 -/var/log/mail'  			,
+  'mail.info 								     -/var/log/mail.info'		,
+  'mail.warning 								 -/var/log/mail.warn'		,
+  'mail.err 									  /var/log/mail.err'		,
+  '# Log all the news messages in one place.'                               ,
+  'news.crit 									 -/var/log/news/news.crit'	,
+  'news.err 									 -/var/log/news/news.err'	,
+  'news.notice 									 -/var/log/news/news.notice',
+  '*.=warning;*.=err 							 -/var/log/warn'			,
+  '*.crit 										 /var/log/warn'				,
+  '# Save news errors of level crit and higher in a spooler file.'          ,
+  'uucp,news.crit                               /var/log/spooler'           ,
+  '# Save boot messages also to boot.log'                                   ,
+  'local7.*                                     /var/log/boot.log'          ,
+  '# Save LDAP Data'                                                        ,
+  'local4.*  					        		/var/log/ldap.log'          ,
+  '# Save AUDITD Data'                                                      ,
+  'local6.*                                     /var/log/audit.log'
 ]
+
 default['stig']['logging']['rsyslog_rules_debian'] = [
   '*.emerg :omusrmsg:*',
   'mail.* -/var/log/mail',
@@ -558,39 +635,39 @@ default['stig']['logging']['rsyslog_rules_debian'] = [
 # Configure logrotate
 default['logrotate']['global']['/var/log/cron'] = {
   'sharedscripts' => 'true',
-  'postrotate' => <<-LOGROTATE
+  'postrotate' => <<-EOF
   /bin/kill -HUP `cat /var/run/syslogd.pid 2> /dev/null` 2> /dev/null || true
-  LOGROTATE
+  EOF
 }
 default['logrotate']['global']['/var/log/maillog'] = {
   'sharedscripts' => 'true',
-  'postrotate' => <<-LOGROTATE
+  'postrotate' => <<-EOF
   /bin/kill -HUP `cat /var/run/syslogd.pid 2> /dev/null` 2> /dev/null || true
-  LOGROTATE
+  EOF
 }
 default['logrotate']['global']['/var/log/messages'] = {
   'sharedscripts' => 'true',
-  'postrotate' => <<-LOGROTATE
+  'postrotate' => <<-EOF
   /bin/kill -HUP `cat /var/run/syslogd.pid 2> /dev/null` 2> /dev/null || true
-  LOGROTATE
+  EOF
 }
 default['logrotate']['global']['/var/log/secure'] = {
   'sharedscripts' => 'true',
-  'postrotate' => <<-LOGROTATE
+  'postrotate' => <<-EOF
   /bin/kill -HUP `cat /var/run/syslogd.pid 2> /dev/null` 2> /dev/null || true
-  LOGROTATE
+  EOF
 }
 default['logrotate']['global']['/var/log/spooler'] = {
   'sharedscripts' => 'true',
-  'postrotate' => <<-LOGROTATE
+  'postrotate' => <<-EOF
   /bin/kill -HUP `cat /var/run/syslogd.pid 2> /dev/null` 2> /dev/null || true
-  LOGROTATE
+  EOF
 }
 default['logrotate']['global']['/var/log/spooler'] = {
   'sharedscripts' => 'true',
-  'postrotate' => <<-LOGROTATE
+  'postrotate' => <<-EOF
   /bin/kill -HUP `cat /var/run/syslogd.pid 2> /dev/null` 2> /dev/null || true
-  LOGROTATE
+  EOF
 }
 
 # By default, SELinux is enabled. However, there may be reasons to shut it off
@@ -686,13 +763,13 @@ default['stig']['sshd_config']['ciphers'] = 'aes128-ctr,aes192-ctr,aes256-ctr'
 # unresponsive SSH clients will be disconnected after approximately 45 seconds.
 # This option applies to protocol version 2 only.
 # The default value is 3.
-default['stig']['sshd_config']['client_alive_count_max'] = 3
+default['stig']['sshd_config']['client_alive_count_max'] = 0
 
 # Sets a timeout interval in seconds after which if no data has been received from
 # the client, sshd will send a message through the encrypted channel to request
 # a response from the client. The default is 0, indicating that these messages
 # will not be sent to the client. This option applies to protocol version 2 only.
-default['stig']['sshd_config']['client_alive_interval'] = 0
+default['stig']['sshd_config']['client_alive_interval'] = 600
 
 # Specifies whether compression is allowed, or delayed until the user has authenticated
 # successfully. The argument must be 'yes' 'delayed' or 'no' The default is 'delayed'
@@ -784,7 +861,7 @@ default['stig']['sshd_config']['ignore_rhosts'] = 'yes'
 
 # Specifies whether sshd should ignore the user's ~/.ssh/known_hosts during
 # RhostsRSAAuthenticationorHostbasedAuthentication. The default is 'no' (false)
-default['stig']['sshd_config']['ignore_user_known_hosts'] = 'no'
+default['stig']['sshd_config']['ignore_user_known_hosts'] = 'yes'
 
 # Specifies whether the password provided by the user for
 # PasswordAuthentication will be validated through the Kerberos
@@ -1089,13 +1166,48 @@ default['stig']['system_auth']['pass_reuse_limit'] = 10
 default['stig']['login_defs']['pass_max_days'] = 60
 
 # Set Password Change Minimum Number of Days
-default['stig']['login_defs']['pass_min_days'] = 7
+default['stig']['login_defs']['pass_min_days'] = 2
+
+# Set Password Minimum Length
+default['stig']['login_defs']['pass_min_length'] = 15
 
 # Set Password Expiring Warning Days
-default['stig']['login_defs']['pass_warn_age'] = 15
+default['stig']['login_defs']['pass_warn_age'] = 7
 
-# Set the login banner(s)
-default['stig']['login_banner']['motd'] = ''
+# Set Default UMASK
+default['stig']['login_defs']['umask'] = '077'
+
+# Set login fail delay. STIG setting is 4
+default['stig']['login_defs']['fail_delay'] = 4
+
+# CIS Benchmark v2.2.0
+# RHEL 7: 5.4.1.4 Ensure inactive password lock is 30 days or less (Scored)
+# Set INACTIVE Days before locking out a local account
+default['stig']['login_defs']['inactive_days'] = 30
+
+# Set the login banner(s) - Can be overwritten with a Web-Server based Attribute Item
+default['stig']['login_banner']['motd'] = "Some Cool Banner from Attributes\n"
+# [ "","","",
+# "##################################################################################",
+# "######################## CONSENT TO MONITOR NOTICE ###############################",
+# "##################################################################################",
+# " You are accessing a United States Government (USG)-authorized",
+# " information system, which includes (1) this computer, (2) this computer network,",
+# " (3) all computers connected to this network, and (4) all devices and storage",
+# " media attached to this network or to a computer on this network.",
+# " This information system is provided for USG-authorized use only. Unauthorized",
+# " or improper use of this system may result in disciplinary action, as well as",
+# " civil and criminal penalties. By using this information system, you understand",
+# " and consent to the following: (1) You have no reasonable expectation of privacy",
+# " regarding communications or data transiting or stored on this information system;",
+# " (2) At any time, and for any lawful USG purpose, the USG may monitor, intercept,",
+# " and search any communication or data transiting or stored on this information",
+# " system; and, (3) Any communications or data transiting or stored on this",
+# " information system may be disclosed or used for any lawful USG purpose. This",
+# " policy is binding, and may not be altered without prior official approval.",
+# "##################################################################################",
+# "##################################################################################",
+						 # "","",""].join("\n")
 default['stig']['login_banner']['issue'] = default['stig']['login_banner']['motd']
 default['stig']['login_banner']['issue_net'] = default['stig']['login_banner']['motd']
 
@@ -1114,6 +1226,9 @@ default['stig']['login_banner']['issue_net'] = default['stig']['login_banner']['
 # inet_interfaces = $myhostname
 # inet_interfaces = $myhostname, localhost
 default['stig']['postfix']['inet_interfaces'] = ['localhost']
+# Optional restrictions that the Postfix SMTP server applies in the context of a client connection request.
+default['stig']['postfix']['smtpd_client_restrictions'] = "permit_mynetworks, reject"
+#
 default['stig']['mail_transfer_agent']['inet_interfaces'] = 'localhost' # Deprecating. Use `default['stig']['postfix']['inet_interfaces']` instead
 # The soft_bounce parameter provides a limited safety net for
 # testing.  When soft_bounce is enabled, mail will remain queued that
@@ -1599,46 +1714,232 @@ default['stig']['postfix']['readme_directory'] = '/usr/share/doc/postfix-2.6.6/R
 # Settings for /etc/pam.d/password-auth and /etc/pam.d/system-auth files
 default['stig']['pam_d']['config']['password_auth'] = [
   'auth        required      pam_env.so',
-  'auth        required      pam_faillock.so preauth audit silent deny=5 unlock_time=900',
-  'auth        sufficient    pam_unix.so nullok try_first_pass',
-  'auth        sufficient    pam_faillock.so authsucc audit deny=5 unlock_time=900',
-  'auth        requisite     pam_succeed_if.so uid >= 1000 quiet_success',
+# 'auth        required      pam_faillock.so preauth audit silent deny=5 unlock_time=900',
+# 'auth        required      pam_faillock.so preauth audit silent deny=3 unlock_time=604800 fail_interval=900',
+  'auth        required      pam_faillock.so preauth silent audit deny=3 even_deny_root fail_interval=900 unlock_time=604800',
+# 'auth        sufficient    pam_unix.so nullok try_first_pass', # Null password never OK
+  'auth        sufficient    pam_unix.so try_first_pass',
+  'auth        sufficient    pam_sss.so use_first_pass', # allow LDAP and other SSSD based authentication methods
+  'auth        requisite     pam_succeed_if.so uid >= 500 quiet',
+# 'auth        [default=die] pam_faillock.so authfail deny=3 unlock_time=604800 fail_interval=900',
+  'auth        [default=die]  pam_faillock.so authfail audit deny=3 even_deny_root fail_interval=900 unlock_time=604800',
+  'auth        required      pam_faillock.so authsucc deny=3 fail_interval=900 unlock_time=604800',
   'auth        required      pam_deny.so',
-  'auth        [success=1 default=bad] pam_unix.so',
-  'auth        [default=die] pam_faillock.so authfail audit deny=5 unlock_time=900',
-  'account     required      pam_unix.so',
+# 'auth        sufficient    pam_faillock.so authsucc audit deny=5 unlock_time=900',
+# 'auth        requisite     pam_succeed_if.so uid >= 1000 quiet_success',
+# 'auth        required      pam_deny.so',
+# 'auth        [success=1 default=bad] pam_unix.so',
+# 'auth        [default=die] pam_faillock.so authfail audit deny=5 unlock_time=900',
+# 'account     required      pam_unix.so',
+# 'account     sufficient    pam_localuser.so',
+# 'account     sufficient    pam_succeed_if.so uid < 1000 quiet',
+# 'account     required      pam_permit.so',
+  'account     required      pam_unix.so broken_shadow',
+  'account     required      pam_faillock.so',
   'account     sufficient    pam_localuser.so',
-  'account     sufficient    pam_succeed_if.so uid < 1000 quiet',
+  'account     sufficient    pam_succeed_if.so uid < 500 quiet',
+  'account     [default=bad success=ok user_unknown=ignore] pam_sss.so',
   'account     required      pam_permit.so',
-  'password    requisite     pam_pwquality.so try_first_pass local_users_only retry=3 authtok_type=',
-  'password    sufficient    pam_unix.so sha512 shadow nullok try_first_pass use_authtok remember=5',
+# 'password    requisite     pam_pwquality.so try_first_pass local_users_only retry=3 authtok_type=',
+# 'password    sufficient    pam_unix.so sha512 shadow nullok try_first_pass use_authtok remember=5',
+# 'password    required      pam_deny.so',
+  'password    required      pam_cracklib.so retry=3 minlen=15 dcredit=-2 ucredit=-2 ocredit=-2 lcredit=-2 difok=8 maxclassrepeat=3',
+  'password    required      pam_pwquality.so try_first_pass local_users_only retry=3 authtok_type=',
+  'password    sufficient    pam_unix.so sha512 min=15 remember=24 shadow try_first_pass use_authtok',
+  'password    sufficient    pam_sss.so use_authtok',
   'password    required      pam_deny.so',
+# 'session     optional      pam_keyinit.so revoke',
+# 'session     required      pam_limits.so',
+# '-session     optional      pam_systemd.so',
+# 'session     [success=1 default=ignore] pam_succeed_if.so service in crond quiet use_uid',
+# 'session     required      pam_unix.so'
   'session     optional      pam_keyinit.so revoke',
   'session     required      pam_limits.so',
-  '-session     optional      pam_systemd.so',
+  'session     required      pam_lastlog.so showfailed',
+  'session     optional      pam_oddjob_mkhomedir.so',
   'session     [success=1 default=ignore] pam_succeed_if.so service in crond quiet use_uid',
-  'session     required      pam_unix.so'
+  'session     required      pam_unix.so',
+  'session     optional      pam_sss.so'
 ]
 
 default['stig']['pam_d']['config']['system_auth'] = [
   'auth        required      pam_env.so',
-  'auth        required      pam_faillock.so preauth audit silent deny=5 unlock_time=900',
-  'auth        sufficient    pam_unix.so nullok try_first_pass',
-  'auth        sufficient    pam_faillock.so authsucc audit deny=5 unlock_time=900',
-  'auth        requisite     pam_succeed_if.so uid >= 1000 quiet_success',
+# 'auth        required      pam_faillock.so preauth audit silent deny=5 unlock_time=900',
+# 'auth        required      pam_faillock.so preauth audit silent deny=3 unlock_time=604800 fail_interval=900',
+  'auth        required      pam_faillock.so preauth silent audit deny=3 even_deny_root fail_interval=900 unlock_time=604800',
+# 'auth        sufficient    pam_unix.so nullok try_first_pass', # Null password never OK
+  'auth        sufficient    pam_unix.so try_first_pass',
+  'auth        sufficient    pam_sss.so use_first_pass', # allow LDAP and other SSSD based authentication methods
+  'auth        requisite     pam_succeed_if.so uid >= 500 quiet',
+# 'auth        [default=die] pam_faillock.so authfail deny=3 unlock_time=604800 fail_interval=900',
+  'auth        [default=die]  pam_faillock.so authfail audit deny=3 even_deny_root fail_interval=900 unlock_time=604800',
+  'auth        required      pam_faillock.so authsucc deny=3 fail_interval=900 unlock_time=604800',
   'auth        required      pam_deny.so',
-  'auth        [success=1 default=bad] pam_unix.so',
-  'auth        [default=die] pam_faillock.so authfail audit deny=5 unlock_time=900',
-  'account     required      pam_unix.so',
+# 'auth        sufficient    pam_faillock.so authsucc audit deny=5 unlock_time=900',
+# 'auth        requisite     pam_succeed_if.so uid >= 1000 quiet_success',
+# 'auth        required      pam_deny.so',
+# 'auth        [success=1 default=bad] pam_unix.so',
+# 'auth        [default=die] pam_faillock.so authfail audit deny=5 unlock_time=900',
+# 'account     required      pam_unix.so',
+# 'account     sufficient    pam_localuser.so',
+# 'account     sufficient    pam_succeed_if.so uid < 1000 quiet',
+# 'account     required      pam_permit.so',
+  'account     required      pam_unix.so broken_shadow',
+  'account     required      pam_faillock.so',
   'account     sufficient    pam_localuser.so',
-  'account     sufficient    pam_succeed_if.so uid < 1000 quiet',
+  'account     sufficient    pam_succeed_if.so uid < 500 quiet',
+  'account     [default=bad success=ok user_unknown=ignore] pam_sss.so',
   'account     required      pam_permit.so',
-  'password    requisite     pam_pwquality.so try_first_pass local_users_only retry=3 authtok_type=',
-  'password    sufficient    pam_unix.so sha512 shadow nullok try_first_pass use_authtok remember=5',
+# 'password    requisite     pam_pwquality.so try_first_pass local_users_only retry=3 authtok_type=',
+# 'password    sufficient    pam_unix.so sha512 shadow nullok try_first_pass use_authtok remember=5',
+# 'password    required      pam_deny.so',
+  'password    required      pam_cracklib.so retry=3 minlen=15 dcredit=-2 ucredit=-2 ocredit=-2 lcredit=-2 difok=8 maxclassrepeat=3',
+  'password    required      pam_pwquality.so try_first_pass local_users_only retry=3 authtok_type=',
+  'password    sufficient    pam_unix.so sha512 min=15 remember=24 shadow try_first_pass use_authtok',
+  'password    sufficient    pam_sss.so use_authtok',
   'password    required      pam_deny.so',
+# 'session     optional      pam_keyinit.so revoke',
+# 'session     required      pam_limits.so',
+# '-session     optional      pam_systemd.so',
+# 'session     [success=1 default=ignore] pam_succeed_if.so service in crond quiet use_uid',
+# 'session     required      pam_unix.so'
   'session     optional      pam_keyinit.so revoke',
   'session     required      pam_limits.so',
-  '-session     optional      pam_systemd.so',
+  'session     required      pam_lastlog.so showfailed',
+  'session     optional      pam_oddjob_mkhomedir.so',
   'session     [success=1 default=ignore] pam_succeed_if.so service in crond quiet use_uid',
-  'session     required      pam_unix.so'
+  'session     required      pam_unix.so',
+  'session     optional      pam_sss.so'
 ]
+
+default['stig']['pam_d']['config']['pwquality_conf'] = [
+	'difok = 8',
+	'minlen = 15',
+	'minclass = 4',
+	'maxrepeat = 2',
+	'maxclassrepeat = 3',
+	'lcredit = -2',
+	'ucredit = -2',
+	'dcredit = -2',
+	'ocredit = -2',
+	'gecoscheck = 1'
+]
+
+default['stig']['pam_d']['config']['passwd_rules'] = [
+'auth       include      system-auth',
+'account    include      system-auth',
+'password	required	 pam_pwquality.so',
+'password   substack     system-auth',
+'-password   optional    pam_gnome_keyring.so use_authtok',
+'password   substack     postlogin'
+]
+
+default['stig']['pam_d']['config']['sssd_shadowutils_rules'] = [
+'auth        [success=done ignore=ignore default=die] pam_unix.so try_first_pass',
+'auth        required      pam_deny.so',
+'account     required      pam_unix.so',
+'account     required      pam_permit.so'
+]
+
+default['stig']['pam_d']['config']['postlogin_ac_rules'] = [
+'session     [success=1 default=ignore] pam_succeed_if.so service !~ gdm* service !~ su* quiet',
+'session     required      pam_lastlog.so showfailed'
+#'session     [default=1]   pam_lastlog.so nowtmp showfailed',
+#'session     optional      pam_lastlog.so silent noupdate showfailed'
+]
+
+
+# Pull Dynamic Package Versions from Databag Based on Chef_Environment of node
+# Load "stig" databag from Databags and get the "packages" attributes
+#
+# Data Bag JSON looks like: data_bags/stig/packages.json
+#
+# Data bag “stig” , Item – “packages”
+# {
+  # "production": {
+    # "authconfig-gtk": {
+      # "version": "6.2.8-30.el7"
+    # },
+    # "cronie": {
+      # "version": "1.4.11-17.el7"
+    # },
+    # "crontabs": {
+      # "version": "1.11-6.20121102git.el7"
+    # },
+    # "dracut-fips": {
+      # "version": "033-502.el7_4.1"
+    # },
+    # "esc": {
+      # "version": "1.1.0-37.el7"
+    # },
+    # "gnutls-utils": {
+      # "version": "3.3.26-9.el7"
+    # },
+    # "libreswan": {
+      # "version": "3.20-5.el7_4"
+    # },
+    # "ntpd": {
+      # "version": "4.2.6p5-25.el7_3.2",
+      # "server_ip": "96.127.72.181"
+    # },
+    # "pam_pkcs11": {
+      # "version": "0.6.2-27.el7"
+    # },
+    # "rsyslog": {
+      # "version": "8.24.0-12.el7",
+      # "server_name": "localhost",
+      # "server_port": "514",
+      # "encrypt_traffic": "1"
+    # },
+    # "rsyslog-gnutls": {
+      # "version": "8.24.0-12.el7"
+    # },
+    # "rsyslog-relp": {
+      # "version": "8.24.0-12.el7"
+    # },
+    # "screen": {
+      # "version": "4.1.0-0.23.20120314git3c2946.el7_2"
+    # },
+    # "yum": {
+      # "proxy_ip": "10.0.1.10:3128"
+    # }
+  # },
+  # "id": "packages"
+# }
+
+package_data = Chef::DataBagItem.load('stig','packages')
+default['stig']['cronie']['version'] = package_data[node.chef_environment]['cronie']['version']
+default['stig']['crontabs']['version'] = package_data[node.chef_environment]['crontabs']['version']
+default['stig']['libreswan']['version'] = package_data[node.chef_environment]['libreswan']['version']
+default['stig']['screen']['version'] = package_data[node.chef_environment]['screen']['version']
+# For Multi-facotr Auth Requirements
+default['stig']['esc']['version'] = package_data[node.chef_environment]['esc']['version']
+default['stig']['pam_pkcs11']['version'] = package_data[node.chef_environment]['pam_pkcs11']['version']
+default['stig']['authconfig-gtk']['version'] = package_data[node.chef_environment]['authconfig-gtk']['version']
+# For Crypto Support
+default['stig']['dracut-fips']['version'] = package_data[node.chef_environment]['dracut-fips']['version']
+# NTP Configuration
+default['stig']['ntpd']['version'] = package_data[node.chef_environment]['ntpd']['version']
+# From Databags and get the NTPD server's IP
+default['stig']['ntpd']['server_ip'] = package_data[node.chef_environment]['ntpd']['server_ip']
+# From Databags and get the YUM Proxy's IP
+default['stig']['yum']['proxy_ip'] = package_data[node.chef_environment]['yum']['proxy_ip']
+# Load Databags and get the RSYSLOG Configuration Information
+default['stig']['rsyslog']['version'] = package_data[node.chef_environment]['rsyslog']['version']
+default['stig']['rsyslog']['encrypt_traffic'] = package_data[node.chef_environment]['rsyslog']['encrypt_traffic']
+default['stig']['rsyslog']['server_port'] = package_data[node.chef_environment]['rsyslog']['server_port']
+default['stig']['rsyslog']['server_name'] = package_data[node.chef_environment]['rsyslog']['server_name']
+default['stig']['gnutls-utils']['version'] = package_data[node.chef_environment]['gnutls-utils']['version']
+default['stig']['rsyslog-gnutls']['version'] = package_data[node.chef_environment]['rsyslog-gnutls']['version']
+default['stig']['rsyslog-relp']['version'] = package_data[node.chef_environment]['rsyslog-relp']['version']
+
+# Used by the stig::local_users recipe
+default['stig']['local_users']['dirs_to_delete']['dir'] = [
+															'/usr/games'       ,
+															'/var/games'       ,
+															'/var/lib/games'   ,
+															'/usr/local/games' ,
+															'/usr/lib/games'   ,
+															'/usr/share/games' ,
+															'/usr/lib64/games'
+														  ]

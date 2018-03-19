@@ -34,11 +34,11 @@
   end
 end
 
-%w[/etc/cron.hourly /etc/cron.daily /etc/cron.weekly /etc/cron.monthly /etc/cron.d].each do |d|
+%w[/etc/cron.hourly /etc/cron.daily /etc/cron.weekly /etc/cron.monthly /etc/cron.d /var/spool/cron].each do |d|
   directory d do
     owner 'root'
     group 'root'
-    mode 0o600
+    mode 0o700
   end
 end
 
@@ -65,11 +65,12 @@ file '/etc/at.allow' do
   action :create
 end
 
-file '/etc/cron.allow' do
-  mode 0o600
-  owner 'root'
-  group 'root'
-  action :create
+# CRON Users
+template '/etc/cron.allow' do
+  source  'etc_cron.allow.erb'
+  owner   'root'
+  group   'root'
+  mode    0o600
 end
 
 file '/etc/at.deny' do

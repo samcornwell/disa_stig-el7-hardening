@@ -20,7 +20,7 @@ package 'aide'
 
 # Get AIDE attrutes
 # TODO: Add defaults for debian/ubuntu platforms
-aide_config = {}.merge(node['stig']['aide'].to_h)
+aide_config = {}.merge(node['stig']['aide'])
 if %w[rhel fedora centos].include?(node['platform'])
   platform_version = node['platform_version'].to_i.to_s
 

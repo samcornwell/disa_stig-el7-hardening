@@ -751,3 +751,6 @@ sample_directory = <%= node['stig']['postfix']['sample_directory'] %>
 # readme_directory: The location of the Postfix README files.
 #
 readme_directory =  <%= node['stig']['postfix']['readme_directory'] %>
+
+# Optional restrictions that the Postfix SMTP server applies in the context of a client connection request.
+smtpd_client_restrictions = <%= node['stig']['postfix']['smtpd_client_restrictions'] %>

@@ -4,8 +4,11 @@
 #
 # Copyright (c) 2014 The Authors, All Rights Reserved.
 
-# RHEL6: 1.1.2, 1.1.3, 1.1.4, 1.1.6, 1.14, 1.1.15, 1.1.16
+# Configure YUM before anything
+# RHEL7:
+include_recipe 'stig::yum'
 
+# RHEL6: 1.1.2, 1.1.3, 1.1.4, 1.1.6, 1.14, 1.1.15, 1.1.16
 # CENTOS6: 1.1.2, 1.1.3, 1.1.4, 1.1.6, 1.1.14, 1.1.15, 1.1.16
 # CENTOS7: 1.1.2, 1.1.3, 1.1.4, 1.1.6, 1.1.14, 1.1.15, 1.1.16
 # UBUNTU: 2.2, 2.3, 2.4, 2.6, 2.14, 2.15, 2.16
@@ -63,7 +66,8 @@ include_recipe 'stig::hosts'
 # RHEL6:  5.1.3
 # CENTOS6: 4.1.3
 # UBUNTU: 8.2.3
-include_recipe 'stig::rsyslog'
+#include_recipe 'stig::rsyslog'
+include_recipe 'stig::rsyslog_client'
 
 # RHEL6:  5.3
 # CENTOS6: 4.3
@@ -108,3 +112,15 @@ include_recipe 'stig::audit_scripts'
 
 # CENTOS6: 6.5
 include_recipe 'stig::su_restriction'
+
+# RHEL7:
+include_recipe 'stig::add_packages'
+
+# RHEL7:
+include_recipe 'stig::inittab'
+
+# RHEL7:
+include_recipe 'stig::ntpd'
+
+# RHEL7:
+include_recipe 'stig::local_users'

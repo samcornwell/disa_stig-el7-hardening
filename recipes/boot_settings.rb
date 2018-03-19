@@ -44,27 +44,27 @@ execute 'update-grub' do
   only_if { %w[debian ubuntu].include? platform }
 end
 
-grub_file = %w[rhel fedora centos redhat].include?(platform) && major_version < 7 ? '/boot/grub/grub.conf' : '/boot/grub2/grub.cfg'
+grub_file = node['platform_family'] == 'rhel'&& major_version < 7 ? '/boot/grub/grub.conf' : '/boot/grub2/grub.cfg'
 
 # This is not scored (or even suggested by CIS) in Ubuntu
 file grub_file do
   owner 'root'
   group 'root'
   mode '0o600'
-  only_if { %w[rhel fedora centos redhat].include? platform }
+  only_if { node['platform_family'] == 'rhel' }
 end
 
 # 1.4.1
 execute 'Remove selinux=0 from grub file' do
   command "sed -i 's/selinux=0//' #{grub_file}"
   only_if "grep -q 'selinux=0' #{grub_file}"
-  only_if { %w[rhel fedora centos redhat].include? platform }
+  only_if { node['platform_family'] == 'rhel' }
 end
 
 execute 'Remove enforcing=0 from grub file' do
   command "sed -i 's/enforcing=0//' #{grub_file}"
   only_if "grep -q 'enforcing=0' #{grub_file}"
-  only_if { %w[rhel fedora centos redhat].include? platform }
+  only_if { node['platform_family'] == 'rhel' }
 end
 
 # 1.5.3
@@ -72,7 +72,7 @@ password = node['stig']['grub']['hashedpassword']
 execute 'Add MD5 password to grub' do
   command "sed -i '11i password --md5 #{password}' #{grub_file}"
   not_if "grep -q '#{password}' #{grub_file}"
-  only_if { %w[rhel fedora centos redhat].include? platform }
+  only_if { node['platform_family'] == 'rhel' }
   only_if { major_version < 7 }
   only_if { node['stig']['grub']['hashedpassword'] != '' }
 end
@@ -80,17 +80,24 @@ end
 execute 'Add password to grub' do
   command "sed -i '/password/d' #{grub_file}"
   only_if "grep -q 'password' #{grub_file}"
-  only_if { %w[rhel fedora centos redhat].include? platform }
+  only_if { node['platform_family'] == 'rhel' }
   only_if { major_version < 7 }
   only_if { node['stig']['grub']['hashedpassword'] == '' }
 end
 
 # TODO: Create adding password to grub for CentOS 7
 # Programtically using grub2-mkpasswd-pbkdf2: echo -e 'mypass\nmypass' | grub2-mkpasswd-pbkdf2 | awk '/grub.pbkdf/{print$NF}'
+# Hardcoded to P@ssword1234 right now
+file '/boot/grub2/user.cfg' do
+  content "GRUB2_PASSWORD=grub.pbkdf2.sha512.10000.01474AE866046E7E634CCF7B7CFA81B34406735649B71519D1A5C980C10B89EED344150ECBCAAAE452FF2DC4F86E9AA55E38EFE062ACF04A94D35BE5A3E42D3E.18CCE00C6AB2C44F7FCEE6BBD25901E2868385C79CD9D710C7D0065325886ED104DDE2151A4FC9CDDC5BE501A5AA507EE1DE859029EBCE3EB72A969F50BBF297\n"
+  mode 0o600
+  owner 'root'
+  group 'root'
+end
 
 cookbook_file '/etc/inittab' do
   source 'etc_inittab'
-  only_if { %w[rhel fedora centos redhat].include? platform }
+  only_if { node['platform_family'] == 'rhel' }
   only_if { major_version < 7 }
 end
 
@@ -108,12 +115,12 @@ template '/etc/selinux/config' do
   mode 0o644
   sensitive true
   notifies :run, 'execute[toggle_selinux]', :delayed
-  only_if { %w[rhel fedora centos redhat].include? platform }
+  only_if { node['platform_family'] == 'rhel' }
 end
 
 link '/etc/sysconfig/selinux' do
   to '/etc/selinux/config'
-  only_if { %w[rhel fedora centos redhat].include? platform }
+  only_if { node['platform_family'] == 'rhel' }
 end
 
 template '/selinux/enforce' do
@@ -122,7 +129,7 @@ template '/selinux/enforce' do
   group 'root'
   variables(enforcing: (enabled_selinux ? 1 : 0))
   only_if { ::File.directory?('/selinux') }
-  only_if { %w[rhel fedora centos redhat].include? platform }
+  only_if { node['platform_family'] == 'rhel' }
   mode 0o644
 end
 
@@ -132,7 +139,7 @@ execute 'toggle_selinux' do
   command "setenforce #{(enabled_selinux ? 1 : 0)}"
   not_if "echo $(getenforce) | awk '{print tolower($0)}' | grep -q -E '(#{status_selinux}|disabled)'"
   ignore_failure true
-  only_if { %w[rhel fedora centos redhat].include? platform }
+  only_if { node['platform_family'] == 'rhel' }
 end
 
 # TODO: Ensure authentication required for single user mode for CentOS 7
@@ -141,7 +148,7 @@ template '/etc/sysconfig/init' do
   owner 'root'
   group 'root'
   mode 0o644
-  only_if { %w[rhel fedora centos redhat].include? platform }
+  only_if { node['platform_family'] == 'rhel' }
   only_if { major_version < 7 }
 end
 
@@ -151,4 +158,9 @@ end
 
 package 'mcstrans' do
   action :remove
+end
+
+#V-72057: Kernel core dumps must be disabled unless needed.
+service 'kdump' do
+  action [:disable, :stop]
 end

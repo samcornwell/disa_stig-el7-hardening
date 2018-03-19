@@ -24,6 +24,30 @@ platform = node['platform']
 var_tmp = '/var/tmp'
 tmp = '/tmp'
 
+# This block executes unless service is marked as enabled.
+ruby_block "get service status" do
+    block do
+      Chef::Resource::RubyBlock.send(:include, Chef::Mixin::ShellOut)
+      command1 = "systemctl is-enabled tmp.mount"
+      command_out = shell_out(command1)
+      node.default['tmp_mount']['service_state'] = command_out.stdout
+    end
+    not_if (node.default['tmp_mount']['service_state'] == 'enabled')
+    action :create
+end
+
+execute 'unmask tmp.mount service' do
+   command 'rm /etc/systemd/system/tmp.mount'
+   only_if { ::File.exist?('/etc/systemd/system/tmp.mount') }
+   only_if (node.default['tmp_mount']['service_state'] == 'masked')
+end
+
+#STIG V-72065: The system must use a separate file system for /tmp (or equivalent).
+service 'tmp.mount' do
+  supports :restart => true, :start => true, :stop => true, :reload => true, :enable => true, :disable => true
+  action [:enable, :start]
+end
+
 mount var_tmp do
   fstype   'tmpfs'
   device   tmp

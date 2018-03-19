@@ -33,7 +33,11 @@ template '/etc/rsyslog.conf' do
   group 'root'
   mode 0o644
   variables(
-    rsyslog_rules: syslog_rules
+    rsyslog_rules: syslog_rules,
+	rsyslog_queue_rules: node['stig']['logging']['rsyslog_queue_rules'],
+	server_port: node['stig']['rsyslog']['server_port'],
+	server_name: node['stig']['rsyslog']['server_name'],
+	encrypt_traffic: node['stig']['rsyslog']['encrypt_traffic']
   )
   notifies :run, 'execute[restart_syslog]', :immediately
 end

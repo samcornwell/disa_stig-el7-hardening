@@ -25,6 +25,14 @@ if %w[rhel fedora centos redhat].include?(node['platform'])
 
     package 'iptables-services'
 
+    template '/etc/sysconfig/iptables' do
+      source 'etc_sysconfig_iptables.erb'
+      user 'root'
+      group 'root'
+      mode 0o644
+	  notifies :reload, "service[iptables]", :delayed
+    end
+
     execute 'enable_iptables' do
       command 'systemctl enable iptables'
       user 'root'
@@ -37,15 +45,18 @@ if %w[rhel fedora centos redhat].include?(node['platform'])
       not_if 'systemctl list-unit-files ip6tables.service | grep -q -w enabled'
     end
 
-    service 'iptables' do
-      action :start
+    execute 'start_iptables' do
+      command 'systemctl start iptables'
+      user 'root'
+      not_if 'systemctl is-active iptables.service | grep -q -w active'
     end
 
-    service 'ip6tables' do
-      action :start
+    execute 'start_ip6tables' do
+      command 'systemctl start ip6tables'
+      user 'root'
+      not_if 'systemctl is-active ip6tables.service | grep -q -w active'
       not_if { node['stig']['network']['ipv6'] == 'no' }
     end
-
   else
     execute 'chkconfig_ip6tables_off' do
       user 'root'
@@ -55,6 +66,11 @@ if %w[rhel fedora centos redhat].include?(node['platform'])
       not_if "chkconfig --list ip6tables  | grep -q '4:#{ipv6onoff}'"
       not_if "chkconfig --list ip6tables  | grep -q '5:#{ipv6onoff}'"
     end
+  end
+
+  service 'iptables' do
+    supports :restart => true, :start => true, :stop => true, :reload => true
+    action :nothing
   end
 
   template '/etc/sysconfig/network' do
