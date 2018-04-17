@@ -82,7 +82,7 @@ end
 # The 'line' var is is wrapped in a #{} so that the reporting will output each
 # line that is tested in the results.
 AUDIT_LINES.each do |line|
-  describe auditd_rules do
+  describe auditd do
     its('lines') { should contain_match(%r{#{line}}) }
   end
 end
