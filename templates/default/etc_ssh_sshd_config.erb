@@ -116,8 +116,6 @@ KerberosTicketCleanup <%= @kerberos_ticket_cleanup %>
 
 KerberosUseKuserok <%= @kerberos_use_kuserok %>
 
-KeyRegenerationInterval <%= @key_regeneration_interval %>
-
 <% @port.each do |pr| -%>
 Port <%= pr %>
 <% end -%>
@@ -158,12 +156,6 @@ PrintLastLog <%= @print_last_log %>
 
 PubkeyAuthentication <%= @pub_key_authentication %>
 
-RhostsRSAAuthentication <%= @rhosts_rsa_authentication %>
-
-RSAAuthentication <%= @rsa_authentication %>
-
-ServerKeyBits <%= @server_key_bits %>
-
 <% if !@show_patch_level.empty? -%>
 ShowPatchLevel <%= @show_patch_level %>
 <% end -%>
@@ -177,8 +169,6 @@ SyslogFacility <%= @syslog_facility %>
 TCPKeepAlive  <%= @tcp_keepalive %>
 
 UseDNS <%= @use_dns %>
-
-UseLogin <%= @use_login %>
 
 UsePAM <%= @use_pam_auth %>
 
