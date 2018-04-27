@@ -820,7 +820,7 @@ default['stig']['sshd_config']['log_level'] = 'INFO'
 # Specifies the available MAC (message authentication code) algorithms.
 # The MAC algorithm  is used  in protocol version 2 for data integrity protection.
 # Multiple algorithms  must be  comma-separated.
-default['stig']['sshd_config']['macs'] = 'hmac-sha2-256,hmac-sha2-512'
+default['stig']['sshd_config']['macs'] = 'hmac-sha2-512,hmac-sha2-256,hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com'
 
 # Specifies the maximum number of concurrent  unauthenticated  connections to the
 # sshd daemon.  Additional connections will be dropped until authentication succeeds
