@@ -5,12 +5,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [UNRELEASED]
 ### Updated
+-- [isuftin@usgs.gov] - Fixed ChefSpec test for updated functionality in proc_hard
+-- [isuftin@usgs.gov] - Fixed node concatenation in rsyslog recipe. Now no longer directly manipulating node attributes
+-- [isuftin@usgs.gov] - Updated deprecated fauxhai CnetOS 6 version from 6.7 to 6.9
 -- [isuftin@usgs.gov] - proc_hard recipe now calls on the sysctl cookbook's
 sysctl_param resource instead of any recipe. This allows the this cookbook to use
 sysctl cookbook version >= 1.0.0
 -- [isuftin@usgs.gov] - Removed version constraint from Berksfile for sysctl
 -- [isuftin@usgs.gov] - Updated Chefspec test to remove test for sysctl::apply recipe
--- [isuftin@usgs.gov] - Added boolean flag to sysctl parameters to ignore errors (defaults to true)
+-- [isuftin@usgs.gov] - Add guard to sysctl call in order to work around bug https://github.com/chef/chef/issues/7189
 -- [isuftin@usgs.gov] - Switched Changelog format
 -- [isuftin@usgs.gov] - Fixed styling for Rubocop 0.55.0
 -- [cpoma@mitre.org] - Bugfix in stig/recipes/mail_transfer_agent.rb to use platform_family versus platform

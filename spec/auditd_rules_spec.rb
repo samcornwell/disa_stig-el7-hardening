@@ -31,7 +31,7 @@ end
 describe 'stig::auditd_rules CentOS 6.x' do
   context 'template context' do
     let(:solo) do
-      ChefSpec::SoloRunner.new(platform: 'centos', version: '6.7')
+      ChefSpec::SoloRunner.new(platform: 'centos', version: '6.9')
     end
 
     let(:chef_run) do

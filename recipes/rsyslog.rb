@@ -9,14 +9,22 @@
 # CENTOS6: 4.1.3
 # UBUNTU: 8.2.3
 
-syslog_rules = node['stig']['logging']['rsyslog_rules']
+syslog_rules = []
+
+node['stig']['logging']['rsyslog_rules'].each do |rule|
+  syslog_rules << rule
+end
 
 if %w[debian ubuntu].include?(node['platform'])
-  syslog_rules.concat(node['stig']['logging']['rsyslog_rules_debian'])
+  node['stig']['logging']['rsyslog_rules_debian'].each do |rule|
+    syslog_rules << rule
+  end
 end
 
 if %w[rhel fedora centos].include?(node['platform'])
-  syslog_rules.concat(node['stig']['logging']['rsyslog_rules_rhel'])
+  node['stig']['logging']['rsyslog_rules_rhel'].each do |rule|
+    syslog_rules << rule
+  end
 end
 
 template '/etc/rsyslog.conf' do
@@ -25,7 +33,7 @@ template '/etc/rsyslog.conf' do
   group 'root'
   mode 0o644
   variables(
-    rsyslog_rules: node['stig']['logging']['rsyslog_rules']
+    rsyslog_rules: syslog_rules
   )
   notifies :run, 'execute[restart_syslog]', :immediately
 end

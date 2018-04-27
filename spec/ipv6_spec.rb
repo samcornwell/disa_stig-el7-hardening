@@ -63,7 +63,7 @@ describe 'stig::ipv6 CentOS 7.x' do
 end
 
 describe 'stig::ipv6 CentOS 6.x' do
-  let(:chef_run) { ChefSpec::SoloRunner.new(platform: 'centos', version: '6.7').converge('stig::ipv6') }
+  let(:chef_run) { ChefSpec::SoloRunner.new(platform: 'centos', version: '6.9').converge('stig::ipv6') }
 
   before do
     stub_command("chkconfig --list ip6tables  | grep -q '2:off'").and_return(false)

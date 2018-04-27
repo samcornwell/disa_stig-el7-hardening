@@ -23,7 +23,7 @@ describe 'stig::su_restriction CentOS 7.x' do
 end
 
 describe 'stig::su_restriction 6.x' do
-  let(:chef_run) { ChefSpec::SoloRunner.new(platform: 'centos', version: '6.7').converge('stig::su_restriction') }
+  let(:chef_run) { ChefSpec::SoloRunner.new(platform: 'centos', version: '6.9').converge('stig::su_restriction') }
 
   it 'Creates file /etc/pam.d/su on RHEL using RHEL template' do
     expect(chef_run).to create_cookbook_file('/etc/pam.d/su').with(

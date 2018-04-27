@@ -10,7 +10,7 @@ describe 'stig::tcp_wrappers CentOS 7.x' do
 end
 
 describe 'stig::tcp_wrappers CentOS 6.x' do
-  let(:chef_run) { ChefSpec::SoloRunner.new(platform: 'centos', version: '6.7').converge('stig::tcp_wrappers') }
+  let(:chef_run) { ChefSpec::SoloRunner.new(platform: 'centos', version: '6.9').converge('stig::tcp_wrappers') }
 
   it 'installs tcp_wrappers package' do
     expect(chef_run).to install_package('tcp_wrappers')
