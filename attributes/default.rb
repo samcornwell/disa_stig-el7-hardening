@@ -467,6 +467,7 @@ default['sysctl']['params']['net.ipv4.conf.default.secure_redirects'] = 0
 # true = Enable IPv6 router advertisements
 default['sysctl']['params']['net.ipv6.conf.all.accept_ra'] = 0
 default['sysctl']['params']['net.ipv6.conf.default.accept_ra'] = 0
+default['sysctl']['params']['net.ipv6.route.flush'] = 1
 
 # Disable IPv6
 # false = Do not disable ipv6
@@ -797,65 +798,63 @@ default['stig']['sshd_config']['kerberos_authentication'] = 'no'
 # Default is 'yes' (true)
 default['stig']['sshd_config']['kerberos_or_local_passwd'] = 'yes'
 
-# Specifies whether to automatically	destroy	the user's ticket cache file on logout.
+# Specifies whether to automatically  destroy  the user's ticket cache file on logout.
 # Default is 'yes' (true)
 default['stig']['sshd_config']['kerberos_ticket_cleanup'] = 'yes'
 
 # Specifies whether to look at .k5login file for user's aliases
 default['stig']['sshd_config']['kerberos_use_kuserok'] = 'yes'
 
-# In protocol version 1, the	ephemeral server key is	automatically
-# regenerated after this many seconds (if it	has been used).	 The
-# purpose of	regeneration is	to prevent decrypting captured sessions by
+# In protocol version 1, the  ephemeral server key is  automatically
+# regenerated after this many seconds (if it  has been used).   The
+# purpose of  regeneration is  to prevent decrypting captured sessions by
 # later breaking into the machine and stealing the keys.
-# The key is	never stored anywhere.	If the value is	0, the key is
-# never regenerated.	 The default is	3600 (seconds).
+# The key is  never stored anywhere.  If the value is  0, the key is
+# never regenerated.   The default is  3600 (seconds).
 default['stig']['sshd_config']['key_regeneration_interval'] = 3600
 
-# The server disconnects after this time if the user has not	successfully logged
-# in.  If the value	is 0, there is no time limit. The default is 120 seconds.
+# The server disconnects after this time if the user has not  successfully logged
+# in.  If the value  is 0, there is no time limit. The default is 120 seconds.
 default['stig']['sshd_config']['login_grace_time'] = 120
 
-# Specifies the port	number that sshd listens on.  The default is
+# Specifies the port  number that sshd listens on.  The default is
 # 22.  Multiple options of this type are permitted
 default['stig']['sshd_config']['port'] = %w[22]
 
 # Specifies whether sshd should print the date and time when the user last logged in.
 default['stig']['sshd_config']['print_last_log'] = 'yes'
 
-# Specifies whether sshd should print /etc/motd when	a user logs in
-# interactively.  (On some systems it is also printed by the	shell,
+# Specifies whether sshd should print /etc/motd when  a user logs in
+# interactively.  (On some systems it is also printed by the  shell,
 # /etc/profile, or equivalent.)
 default['stig']['sshd_config']['print_motd'] = 'yes'
 
 # Specifies whether public key authentication is allowed.
-# Note that this option	applies	to protocol version 2 only
+# Note that this option  applies  to protocol version 2 only
 default['stig']['sshd_config']['pub_key_authentication'] = 'yes'
 
 # Gives the verbosity level that is used when logging messages from
-# sshd.  The	possible values	are: QUIET, FATAL, ERROR, INFO,	VER-
+# sshd.  The  possible values  are: QUIET, FATAL, ERROR, INFO,  VER-
 # BOSE, DEBUG, DEBUG1, DEBUG2 and DEBUG3.  The default is INFO.
 # DEBUG and DEBUG1 are equivalent.  DEBUG2 and DEBUG3 each specify
-# higher levels of debugging	output.	 Logging with a	DEBUG level
+# higher levels of debugging  output.   Logging with a  DEBUG level
 # violates the privacy of users and is not recommended.
 default['stig']['sshd_config']['log_level'] = 'INFO'
 
 # Specifies the available MAC (message authentication code) algorithms.
-# The MAC algorithm	is used	in protocol version 2 for data integrity protection.
-# Multiple algorithms	must be	comma-separated.
-# This is the minimum common set of macs from the CENTOS6/7, RHEL6/7, and UBUNTU
-# CIS Benchmarks
-default['stig']['sshd_config']['macs'] = 'hmac-sha2-512,hmac-sha2-256'
+# The MAC algorithm  is used  in protocol version 2 for data integrity protection.
+# Multiple algorithms  must be  comma-separated.
+default['stig']['sshd_config']['macs'] = 'hmac-sha2-512,hmac-sha2-256,hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com'
 
-# Specifies the maximum number of concurrent	unauthenticated	connections to the
+# Specifies the maximum number of concurrent  unauthenticated  connections to the
 # sshd daemon.  Additional connections will be dropped until authentication succeeds
-# or the LoginGraceTime expires for a connection.	The default is 10:30:60.
+# or the LoginGraceTime expires for a connection.  The default is 10:30:60.
 #
-# Alternatively, random early drop can be enabled by	specifying the
+# Alternatively, random early drop can be enabled by  specifying the
 # three colon separated values ``start:rate:full'' (e.g.,
-# "10:30:60").  sshd	will refuse connection attempts	with a probability of
+# "10:30:60").  sshd  will refuse connection attempts  with a probability of
 # 'rate/100' (30%) if there are currently 'start' (10) unauthenticated connections.
-# The probability	increases linearly and all connection attempts are refused if
+# The probability  increases linearly and all connection attempts are refused if
 # the number of unauthenticated connections reaches 'full' (60).
 default['stig']['sshd_config']['max_startups'] = '10:30:60'
 
@@ -881,15 +880,15 @@ default['stig']['sshd_config']['password_authentication'] = 'yes'
 
 # Specifies whether rhosts or /etc/hosts.equiv authentication
 # together with successful RSA host authentication is allowed
-# This option applies to	protocol version 1 only.
+# This option applies to  protocol version 1 only.
 default['stig']['sshd_config']['rhosts_rsa_authentication'] = 'no'
 
-# Specifies whether pure RSA	authentication is allowed.
-# This option applies to	protocol version 1 only.
+# Specifies whether pure RSA  authentication is allowed.
+# This option applies to  protocol version 1 only.
 default['stig']['sshd_config']['rsa_authentication'] = 'no'
 
-# Defines the number	of bits	in the ephemeral protocol version 1
-# server key.  The minimum value is 512, and	the default is 768
+# Defines the number  of bits  in the ephemeral protocol version 1
+# server key.  The minimum value is 512, and  the default is 768
 default['stig']['sshd_config']['server_key_bits'] = 768
 
 # Specifies whether sshd will display the patch level of the binary in the
@@ -897,110 +896,110 @@ default['stig']['sshd_config']['server_key_bits'] = 768
 # The default is 'no' (false). This option applies to protocol version 1 only.
 default['stig']['sshd_config']['show_patch_level'] = 'no'
 
-# Specifies whether sshd should check file modes and	ownership of
-# the user's files and home directory before	accepting login.  This
-# is	normally desirable because novices sometimes accidentally
+# Specifies whether sshd should check file modes and  ownership of
+# the user's files and home directory before  accepting login.  This
+# is  normally desirable because novices sometimes accidentally
 # leave their directory or files world-writable.
 default['stig']['sshd_config']['strict_modes'] = 'yes'
 
-# Configures	an external subsystem (e.g., file transfer daemon).
-# Arguments should be a subsystem name and a	command	to execute
+# Configures  an external subsystem (e.g., file transfer daemon).
+# Arguments should be a subsystem name and a  command  to execute
 # upon subsystem request.  The command sftp-server implements
-# the ``sftp'' file transfer	subsystem.  By default no subsystems
-# are defined.  Note	that this option applies to protocol version 2
+# the ``sftp'' file transfer  subsystem.  By default no subsystems
+# are defined.  Note  that this option applies to protocol version 2
 # only.
-default['stig']['sshd_config']['subsystem'] = 'sftp	/usr/libexec/openssh/sftp-server'
+default['stig']['sshd_config']['subsystem'] = 'sftp  /usr/libexec/openssh/sftp-server'
 
-# Gives the facility	code that is used when logging messages	from
-# sshd.  The	possible values	are: DAEMON, USER, AUTH, LOCAL0,
+# Gives the facility  code that is used when logging messages  from
+# sshd.  The  possible values  are: DAEMON, USER, AUTH, LOCAL0,
 # LOCAL1, LOCAL2, LOCAL3, LOCAL4, LOCAL5, LOCAL6, LOCAL7.  The
-# default is	AUTHPRIV.
+# default is  AUTHPRIV.
 default['stig']['sshd_config']['syslog_facility'] = 'AUTHPRIV'
 
 # Specifies whether the system should send TCP keepalive messages
-# to	the other side.	 If they are sent, death of the	connection or
+# to  the other side.   If they are sent, death of the  connection or
 # crash of one of the machines will be properly noticed.  However,
-# this means	that connections will die if the route is down tempo-
-# rarily, and some people find it annoying.	On the other hand, if
-# TCP keepalives are	not sent, sessions may hang indefinitely on
+# this means  that connections will die if the route is down tempo-
+# rarily, and some people find it annoying.  On the other hand, if
+# TCP keepalives are  not sent, sessions may hang indefinitely on
 # the server, leaving 'ghost' users and consuming server
 # resources.
 #
-# The default is 'yes' (true) (to	send TCP keepalive messages), and the
-# server will notice	if the network goes down or the	client host
+# The default is 'yes' (true) (to  send TCP keepalive messages), and the
+# server will notice  if the network goes down or the  client host
 # crashes.  This avoids infinitely hanging sessions.
 #
-# To	disable	TCP keepalive messages,	the value should be set	to
+# To  disable  TCP keepalive messages,  the value should be set  to
 # 'no' (false).
 default['stig']['sshd_config']['tcp_keepalive'] = 'yes'
 
 # Specifies whether sshd should lookup the remote host name and
-# check that	the resolved host name for the remote IP address maps
+# check that  the resolved host name for the remote IP address maps
 # back to the very same IP address.
 default['stig']['sshd_config']['use_dns'] = 'no'
 
-# Specifies whether login is used	for interactive	login sessions.
-# The default is 'no' (false).  Note that login	is never used
-# for remote	command	execution.  Note also, that if this is
+# Specifies whether login is used  for interactive  login sessions.
+# The default is 'no' (false).  Note that login  is never used
+# for remote  command  execution.  Note also, that if this is
 # enabled, X11Forwarding will be disabled because login does not
-# know how to handle	xauth cookies.  If UsePrivilegeSeparation
-# is	specified, it will be disabled after authentication.
+# know how to handle  xauth cookies.  If UsePrivilegeSeparation
+# is  specified, it will be disabled after authentication.
 default['stig']['sshd_config']['use_login'] = 'no'
 
 # Specifies whether sshd separates privileges by creating an
-# unprivileged child	process	to deal	with incoming network traffic.
+# unprivileged child  process  to deal  with incoming network traffic.
 # After successful authentication, another process will be created
-# that has the privilege of the authenticated user.	The goal of
-# privilege separation is to	prevent	privilege escalation by	containing
-# any corruption within the unprivileged processes.	The
-# default is	'yes' (true).
+# that has the privilege of the authenticated user.  The goal of
+# privilege separation is to  prevent  privilege escalation by  containing
+# any corruption within the unprivileged processes.  The
+# default is  'yes' (true).
 default['stig']['sshd_config']['use_privilege_separation'] = 'yes'
 
-# Specifies a string	to append to the regular version string	to
+# Specifies a string  to append to the regular version string  to
 # identify OS- or site-specific modifications.
 default['stig']['sshd_config']['version_addendum'] = ''
 
-# Specifies the first display number	available for sshd's X11 forwarding.
-# This prevents sshd from interfering with	real X11 servers.
+# Specifies the first display number  available for sshd's X11 forwarding.
+# This prevents sshd from interfering with  real X11 servers.
 default['stig']['sshd_config']['x_11_display_offset'] = 10
 
 # Specifies whether X11 forwarding is permitted.  The argument must
-# be	'yes'	(true) or 'no' (false).  The	default	is 'yes'.
+# be  'yes'  (true) or 'no' (false).  The  default  is 'yes'.
 #
 # When X11 forwarding is enabled, there may be additional exposure
-# to	the server and to client displays if the sshd proxy display is
-# configured	to listen on the wildcard address (see X11UseLocalhost
+# to  the server and to client displays if the sshd proxy display is
+# configured  to listen on the wildcard address (see X11UseLocalhost
 # below), however this is not the default.  Additionally, the
-# authentication spoofing and authentication	data verification and
-# substitution occur	on the client side.  The security risk of
+# authentication spoofing and authentication  data verification and
+# substitution occur  on the client side.  The security risk of
 # using X11 forwarding is that the clients X11 display server may
-# be	exposed	to attack when the ssh client requests forwarding (see
+# be  exposed  to attack when the ssh client requests forwarding (see
 # the warnings for ForwardX11 in ssh_config).  A system administrator
-# may	have a stance in which they want to protect clients
-# that may expose themselves	to attack by unwittingly requesting
+# may  have a stance in which they want to protect clients
+# that may expose themselves  to attack by unwittingly requesting
 # X11 forwarding, which can warrant a 'no' setting.
 #
-# Note that disabling X11 forwarding	does not prevent users from
-# forwarding	X11 traffic, as	users can always install their own
+# Note that disabling X11 forwarding  does not prevent users from
+# forwarding  X11 traffic, as  users can always install their own
 # forwarders.  X11 forwarding is automatically disabled if UseLogin
-# is	enabled.
+# is  enabled.
 default['stig']['sshd_config']['x_11_forwarding'] = 'yes'
 
-# Specifies whether sshd should bind	the X11	forwarding server to
-# the loopback address or to	the wildcard address.  By default,
-# sshd binds	the forwarding server to the loopback address and sets
+# Specifies whether sshd should bind  the X11  forwarding server to
+# the loopback address or to  the wildcard address.  By default,
+# sshd binds  the forwarding server to the loopback address and sets
 # the hostname part of the DISPLAY environment variable to
-# 'localhost'.  This prevents remote hosts	from connecting	to the
+# 'localhost'.  This prevents remote hosts  from connecting  to the
 # proxy display.  However, some older X11 clients may not function
 # with this configuration.  X11UseLocalhost may be set to 'no' to
-# specify that the forwarding server	should be bound	to the wildcard
-# address.  The	argument must be 'yes' (true) or 'no' (false).
+# specify that the forwarding server  should be bound  to the wildcard
+# address.  The  argument must be 'yes' (true) or 'no' (false).
 default['stig']['sshd_config']['x_11_use_local_host'] = 'yes'
 
-# Specifies the full	pathname of the	xauth program
+# Specifies the full  pathname of the  xauth program
 default['stig']['sshd_config']['x_auth_location'] = ''
 
-# Specifies the file	that contains the process ID of	the sshd daemon
+# Specifies the file  that contains the process ID of  the sshd daemon
 default['stig']['sshd_config']['pid_file'] = '/var/run/sshd.pid'
 
 # Allow Users to Set Environment Options
@@ -1043,7 +1042,7 @@ default['stig']['sshd_config']['allow_agent_forwarding'] = 'yes'
 
 default['stig']['sshd_config']['allow_users'] = []
 default['stig']['sshd_config']['allow_groups'] = []
-# Specifies what environment	variables sent by the client will be copied into
+# Specifies what environment  variables sent by the client will be copied into
 # the session's environ
 # see: https://www.freebsd.org/cgi/man.cgi?query=environ&sektion=7&apropos=0&manpath=FreeBSD+11.0-RELEASE+and+Ports
 default['stig']['sshd_config']['accept_env'] = %w[
@@ -1074,9 +1073,9 @@ default['stig']['sshd_config']['address_family'] = 'any'
 # ListenAddress host|IPv4_addr:port
 # ListenAddress [host|IPv6_addr]:port
 #
-# If	port is	not specified, sshd will listen	on the address and all
-# Port options specified.  The default is to	listen on all local
-# addresses.	 Multiple ListenAddress	options	are permitted.
+# If  port is  not specified, sshd will listen  on the address and all
+# Port options specified.  The default is to  listen on all local
+# addresses.   Multiple ListenAddress  options  are permitted.
 default['stig']['sshd_config']['listen_address'] = %w[0.0.0.0]
 
 # Specifies the protocol versions sshd supports. (String), Default: 2

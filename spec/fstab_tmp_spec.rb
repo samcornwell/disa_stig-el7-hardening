@@ -35,7 +35,7 @@ describe 'stig::fstab_tmp CentOS 7.x' do
 end
 
 describe 'stig::fstab_tmp CentOS 6.x' do
-  let(:chef_run) { ChefSpec::SoloRunner.new(platform: 'centos', version: '6.7').converge('stig::fstab_tmp') }
+  let(:chef_run) { ChefSpec::SoloRunner.new(platform: 'centos', version: '6.9').converge('stig::fstab_tmp') }
 
   before do
     stub_command('mount | grep /var/tmp').and_return(false)

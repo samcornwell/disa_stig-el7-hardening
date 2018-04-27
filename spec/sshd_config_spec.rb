@@ -21,7 +21,7 @@ describe 'stig::sshd_config CentOS 7.x' do
 end
 
 describe 'stig::sshd_config CentOS 6.x' do
-  let(:chef_run) { ChefSpec::SoloRunner.new(platform: 'centos', version: '6.7').converge('stig::sshd_config') }
+  let(:chef_run) { ChefSpec::SoloRunner.new(platform: 'centos', version: '6.9').converge('stig::sshd_config') }
   let(:template) { chef_run.template('/etc/ssh/sshd_config') }
 
   it 'creates /etc/ssh/sshd_config template' do

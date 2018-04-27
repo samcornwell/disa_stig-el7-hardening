@@ -34,7 +34,7 @@ describe 'stig::system_auth CentOS 7.x' do
 end
 
 describe 'stig::system_auth CentOS 6.x' do
-  let(:chef_run) { ChefSpec::SoloRunner.new(platform: 'centos', version: '7.3.1611').converge('stig::system_auth') }
+  let(:chef_run) { ChefSpec::SoloRunner.new(platform: 'centos', version: '6.9').converge('stig::system_auth') }
 
   before do
     allow(File).to receive(:symlink?).with(anything).and_call_original

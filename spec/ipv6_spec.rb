@@ -57,13 +57,13 @@ describe 'stig::ipv6 CentOS 7.x' do
     expect(chef_run).to start_service("iptables")
   end
 
-  it 'Executes start_ip6tables' do
+  it 'Does not execute start_ip6tables' do
     expect(chef_run).to_not start_service("ip6tables")
   end
 end
 
 describe 'stig::ipv6 CentOS 6.x' do
-  let(:chef_run) { ChefSpec::SoloRunner.new(platform: 'centos', version: '6.7').converge('stig::ipv6') }
+  let(:chef_run) { ChefSpec::SoloRunner.new(platform: 'centos', version: '6.9').converge('stig::ipv6') }
 
   before do
     stub_command("chkconfig --list ip6tables  | grep -q '2:off'").and_return(false)

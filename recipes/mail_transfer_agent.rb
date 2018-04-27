@@ -10,13 +10,15 @@
 # Ubuntu 6.15
 
 source = ''
-if %w[rhel fedora centos].include?(node['platform'])
-  source = 'etc_main.cf_rhel.erb'
-end
+# Fixed to check platform_family versus platform
+#    'redhat', 'centos' are platforms;
+#    'rhel' is the platform_family that includes those platforms
+source = 'etc_main.cf_rhel.erb' if node['platform_family'] == 'rhel'
 
-if %w[debian ubuntu].include?(node['platform'])
-  source = 'etc_main.cf_ubuntu.erb'
-end
+# Fixed to check platform_family versus platform
+#    'debian', 'ubuntu', 'linuxmint' are platforms;
+#    'debian' is the platform_family that includes those platforms
+source = 'etc_main.cf_ubuntu.erb' if node['platform_family'] == 'debian'
 
 template '/etc/postfix/main.cf' do
   source source

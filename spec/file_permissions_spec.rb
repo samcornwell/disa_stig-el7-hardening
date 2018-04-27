@@ -113,7 +113,7 @@ describe 'stig::file_permissions CentOS 7.x' do
 end
 
 describe 'stig::file_permissions CentOS 6.x' do
-  let(:chef_run) { ChefSpec::SoloRunner.new(platform: 'centos', version: '6.7').converge('stig::file_permissions') }
+  let(:chef_run) { ChefSpec::SoloRunner.new(platform: 'centos', version: '6.9').converge('stig::file_permissions') }
 
   it 'creates /etc/anacrontab template' do
     expect(chef_run).to create_file('/etc/anacrontab').with(

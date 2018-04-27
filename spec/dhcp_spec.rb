@@ -32,7 +32,7 @@ describe 'stig::dhcp CentOS 7.x' do
 end
 
 describe 'stig::dhcp CentOS 6.x' do
-  let(:chef_run) { ChefSpec::SoloRunner.new(platform: 'centos', version: '6.7').converge('stig::dhcp') }
+  let(:chef_run) { ChefSpec::SoloRunner.new(platform: 'centos', version: '6.9').converge('stig::dhcp') }
 
   before do
     stub_command("systemctl >/dev/null 2>&1 && /usr/bin/systemctl list-unit-files | grep -q 'dhcpd'").and_return(true)

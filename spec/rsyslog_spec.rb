@@ -19,7 +19,7 @@ describe 'stig::rsyslog CentOS 7.x' do
 end
 
 describe 'stig::rsyslog CentOS 6.x' do
-  let(:chef_run) { ChefSpec::SoloRunner.new(platform: 'centos', version: '6.7').converge('stig::rsyslog') }
+  let(:chef_run) { ChefSpec::SoloRunner.new(platform: 'centos', version: '6.9').converge('stig::rsyslog') }
 
   it 'creates /etc/rsyslog.conf template' do
     expect(chef_run).to create_template('/etc/rsyslog.conf').with(

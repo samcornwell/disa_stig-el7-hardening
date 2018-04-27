@@ -109,7 +109,7 @@ describe 'stig::boot_settings CentOS 6.x' do
   #     node.normal['stig']['grub']['hashedpassword'] = 'hello'
   #   end.converge(described_recipe)
   # end
-  let(:chef_run) { ChefSpec::SoloRunner.new(platform: 'centos', version: '6.7').converge('stig::boot_settings') }
+  let(:chef_run) { ChefSpec::SoloRunner.new(platform: 'centos', version: '6.9').converge('stig::boot_settings') }
   grub_file = "/boot/grub/grub.conf"
 
   before do
