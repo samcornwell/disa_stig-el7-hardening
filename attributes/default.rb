@@ -3,7 +3,7 @@
 #
 # Use grub-mkpasswd-pbkdf2 for Ubuntu. This is hashed 'ChangeMe':
 # grub.pbkdf2.sha512.10000.018CE115164107059077A[... cut for brevity ...]525DE71E3FF5FC734461C6
-default['stig']['grub']['hashedpassword'] = ''
+default['stig']['grub']['hashedpassword'] = 'grub.pbkdf2.sha512.10000.6291442704A76F0CCB3018718FC02FF6647A2EA131987110E1E305DC903B7F80D3E111896609D75ED895500548586F85CC22CDD9B0D46A9019FAF991BD208BFF.DCA76757F6FE34DCF2F6BB5972EA0F7690CE4244C743BE4EA99EB8DA96520B786C2A7743BE950C4DFD98546A6190A7A04A9905128A440E10503E12D2A4D6AFD6'
 
 # Set hard core to 0 according to CIS 1.5.1
 default['stig']['limits'] = [
@@ -48,14 +48,14 @@ default['stig']['aide']['rules_rhel']['6'] = {
 # Default rules for RHEL 7+
 default['stig']['aide']['rules_rhel']['default'] = {
   'ALLXTRAHASHES' => 'sha1+rmd160+sha256+sha512+tiger',
-  'CONTENT ' => 'sha256+ftype',
-  'CONTENT_EX ' => 'sha256+ftype+p+u+g+n+acl+selinux+xattrs',
-  'DATAONLY' => 'p+n+u+g+s+acl+selinux+xattrs+sha256',
+  'CONTENT' => 'sha512+ftype',
+  'CONTENT_EX' => 'sha512+ftype+p+u+g+n+acl+selinux+xattrs',
+  'DATAONLY' => 'p+n+u+g+s+acl+selinux+xattrs+sha512',
   'DIR' => 'p+i+n+u+g+acl+selinux+xattrs',
   'EVERYTHING' => 'R+ALLXTRAHASHES',
-  'FIPSR' => 'p+i+n+u+g+s+m+c+acl+selinux+xattrs+sha256',
+  'FIPSR' => 'p+i+n+u+g+s+m+c+acl+selinux+xattrs+sha512',
   'LOG' => 'p+u+g+n+acl+selinux+ftype',
-  'NORMAL' => 'sha256',
+  'NORMAL' => 'sha512+acl+xattrs',
   'PERMS' => 'p+u+g+acl+selinux+xattrs',
   'STATIC' => 'p+u+g+acl+selinux+xattrs+i+n+b+c+ftype'
 }
@@ -160,8 +160,8 @@ default['stig']['aide']['paths_rhel']['default'] = {
   '/sbin/' => 'CONTENT_EX',
   '/lib/' => 'CONTENT_EX',
   '/lib64/' => 'CONTENT_EX',
-  '/opt/' => 'CONTENT',
-  '/root/\..*' => 'PERMS',
+  '/opt/' => 'CONTENT+NORMAL',
+  '/root/\..*' => 'PERMS+NORMAL',
   '/root/' => 'CONTENT_EX',
   '/usr/src/' => '!',
   '/usr/tmp/' => '!',
@@ -194,13 +194,13 @@ default['stig']['aide']['paths_rhel']['default'] = {
   '/etc/networks$' => 'CONTENT_EX',
   '/etc/dhcp/' => 'CONTENT_EX',
   '/etc/wpa_supplicant/' => 'CONTENT_EX',
-  '/etc/resolv.conf$' => 'DATAONLY',
+  '/etc/resolv.conf$' => 'DATAONLY+NORMAL',
   '/etc/nscd.conf$' => 'NORMAL',
   '/etc/login.defs$' => 'CONTENT_EX',
   '/etc/libuser.conf$' => 'CONTENT_EX',
-  '/var/log/faillog$' => 'PERMS',
-  '/var/log/lastlog$' => 'PERMS',
-  '/var/run/faillock/' => 'PERMS',
+  '/var/log/faillog$' => 'PERMS+NORMAL',
+  '/var/log/lastlog$' => 'PERMS+NORMAL',
+  '/var/run/faillock/' => 'PERMS+NORMAL',
   '/etc/pam.d/' => 'CONTENT_EX',
   '/etc/security$' => 'CONTENT_EX',
   '/etc/securetty$' => 'CONTENT_EX',
@@ -233,8 +233,8 @@ default['stig']['aide']['paths_rhel']['default'] = {
   '/etc/rsyslog.d/' => 'CONTENT_EX',
   '/etc/logrotate.conf$' => 'CONTENT_EX',
   '/etc/logrotate.d/' => 'CONTENT_EX',
-  '/var/log/' => 'LOG+ANF+ARF',
-  '/var/run/utmp$' => 'LOG',
+  '/var/log/' => 'LOG+ANF+ARF+NORMAL',
+  '/var/run/utmp$' => 'LOG+NORMAL',
   '/etc/pkcs11/' => 'CONTENT_EX',
   '/etc/pki/' => 'CONTENT_EX',
   '/etc/ssl/' => 'CONTENT_EX',
@@ -258,9 +258,9 @@ default['stig']['aide']['paths_rhel']['default'] = {
   '/etc/depmod.d/' => 'CONTENT_EX',
   '/etc/udev/' => 'CONTENT_EX',
   '/etc/crypttab$' => 'CONTENT_EX',
-  '/var/spool/at/' => 'CONTENT',
-  '/etc/at.allow$' => 'CONTENT',
-  '/etc/at.deny$' => 'CONTENT',
+  '/var/spool/at/' => 'CONTENT+NORMAL',
+  '/etc/at.allow$' => 'CONTENT+NORMAL',
+  '/etc/at.deny$' => 'CONTENT+NORMAL',
   '/etc/cron.allow$' => 'CONTENT_EX',
   '/etc/cron.deny$' => 'CONTENT_EX',
   '/etc/cron.d/' => 'CONTENT_EX',
@@ -269,7 +269,7 @@ default['stig']['aide']['paths_rhel']['default'] = {
   '/etc/cron.monthly/' => 'CONTENT_EX',
   '/etc/cron.weekly/' => 'CONTENT_EX',
   '/etc/crontab$' => 'CONTENT_EX',
-  '/var/spool/cron/root/' => 'CONTENT',
+  '/var/spool/cron/root/' => 'CONTENT+NORMAL',
   '/etc/anacrontab$' => 'CONTENT_EX',
   '/etc/ntp.conf$' => 'CONTENT_EX',
   '/etc/ntp/' => 'CONTENT_EX',
@@ -283,8 +283,8 @@ default['stig']['aide']['paths_rhel']['default'] = {
   '/etc/ssh/sshd_config$' => 'CONTENT_EX',
   '/etc/ssh/ssh_config$' => 'CONTENT_EX',
   '/etc/stunnel/' => 'CONTENT_EX',
-  '/etc/vsftpd.conf$' => 'CONTENT',
-  '/etc/vsftpd/' => 'CONTENT',
+  '/etc/vsftpd.conf$' => 'CONTENT+NORMAL',
+  '/etc/vsftpd/' => 'CONTENT+NORMAL',
   '/etc/cups/' => 'CONTENT_EX',
   '/etc/cupshelpers/' => 'CONTENT_EX',
   '/etc/avahi/' => 'CONTENT_EX',
@@ -295,7 +295,7 @@ default['stig']['aide']['paths_rhel']['default'] = {
   '/etc/named.rfc1912.zones$' => 'CONTENT_EX',
   '/etc/named.root.key$' => 'CONTENT_EX',
   '/etc/xinetd.d/' => 'CONTENT_EX',
-  '/etc/' => 'PERMS',
+  '/etc/' => 'PERMS+NORMAL',
   '/var/log/httpd/' => '!'
 }
 
@@ -853,6 +853,7 @@ default['stig']['sshd_config']['host_key'] = %w[
   /etc/ssh/ssh_host_key
   /etc/ssh/ssh_host_rsa_key
   /etc/ssh/ssh_host_dsa_key
+  /etc/ssh/ssh_host_ecdsa_key
 ]
 
 # Specifies that .rhosts and .shosts files will not be used in RhostsRSAAuthenticationorHostbasedAuthentication
@@ -1855,59 +1856,63 @@ default['stig']['pam_d']['config']['postlogin_ac_rules'] = [
 # Data Bag JSON looks like: data_bags/stig/packages.json
 #
 # Data bag “stig” , Item – “packages”
-# {
-  # "production": {
-    # "authconfig-gtk": {
-      # "version": "6.2.8-30.el7"
-    # },
-    # "cronie": {
-      # "version": "1.4.11-17.el7"
-    # },
-    # "crontabs": {
-      # "version": "1.11-6.20121102git.el7"
-    # },
-    # "dracut-fips": {
-      # "version": "033-502.el7_4.1"
-    # },
-    # "esc": {
-      # "version": "1.1.0-37.el7"
-    # },
-    # "gnutls-utils": {
-      # "version": "3.3.26-9.el7"
-    # },
-    # "libreswan": {
-      # "version": "3.20-5.el7_4"
-    # },
-    # "ntpd": {
-      # "version": "4.2.6p5-25.el7_3.2",
-      # "server_ip": "96.127.72.181"
-    # },
-    # "pam_pkcs11": {
-      # "version": "0.6.2-27.el7"
-    # },
-    # "rsyslog": {
-      # "version": "8.24.0-12.el7",
-      # "server_name": "localhost",
-      # "server_port": "514",
-      # "encrypt_traffic": "1"
-    # },
-    # "rsyslog-gnutls": {
-      # "version": "8.24.0-12.el7"
-    # },
-    # "rsyslog-relp": {
-      # "version": "8.24.0-12.el7"
-    # },
-    # "screen": {
-      # "version": "4.1.0-0.23.20120314git3c2946.el7_2"
-    # },
-    # "yum": {
-      # "proxy_ip": "10.0.1.10:3128"
-    # }
-  # },
-  # "id": "packages"
-# }
 
-package_data = Chef::DataBagItem.load('stig','packages')
+# package_data = Chef::DataBagItem.load('stig','packages')
+
+require 'json'
+package_data = JSON.parse <<-EOS
+{
+  "_default": {
+    "authconfig-gtk": {
+
+    },
+    "cronie": {
+
+    },
+    "crontabs": {
+
+    },
+    "dracut-fips": {
+
+    },
+    "esc": {
+
+    },
+    "gnutls-utils": {
+
+    },
+    "libreswan": {
+
+    },
+    "ntpd": {
+      "server_ip": "96.127.72.181"
+    },
+    "pam_pkcs11": {
+
+    },
+    "rsyslog": {
+
+      "server_name": "localhost",
+      "server_port": "514",
+      "encrypt_traffic": "1"
+    },
+    "rsyslog-gnutls": {
+
+    },
+    "rsyslog-relp": {
+
+    },
+    "screen": {
+
+    },
+    "yum": {
+    }
+  },
+  "id": "packages"
+}
+EOS
+package_data[node.chef_environment] = package_data['_default']
+
 default['stig']['cronie']['version'] = package_data[node.chef_environment]['cronie']['version']
 default['stig']['crontabs']['version'] = package_data[node.chef_environment]['crontabs']['version']
 default['stig']['libreswan']['version'] = package_data[node.chef_environment]['libreswan']['version']

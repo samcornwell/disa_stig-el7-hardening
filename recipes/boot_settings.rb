@@ -44,7 +44,13 @@ execute 'update-grub' do
   only_if { %w[debian ubuntu].include? platform }
 end
 
-grub_file = node['platform_family'] == 'rhel'&& major_version < 7 ? '/boot/grub/grub.conf' : '/boot/grub2/grub.cfg'
+# TODO: support for UEFI?
+grub_file =
+  if node['platform_family'] == 'rhel' && major_version < 7
+    '/boot/grub/grub.conf'
+  else
+    '/boot/grub2/grub.cfg'
+  end
 
 # This is not scored (or even suggested by CIS) in Ubuntu
 file grub_file do
@@ -54,6 +60,7 @@ file grub_file do
   only_if { node['platform_family'] == 'rhel' }
 end
 
+# TODO: rewrite for grub2, we shouldn't be manipulating grub.cfg directly
 # 1.4.1
 execute 'Remove selinux=0 from grub file' do
   command "sed -i 's/selinux=0//' #{grub_file}"
@@ -65,6 +72,56 @@ execute 'Remove enforcing=0 from grub file' do
   command "sed -i 's/enforcing=0//' #{grub_file}"
   only_if "grep -q 'enforcing=0' #{grub_file}"
   only_if { node['platform_family'] == 'rhel' }
+end
+
+# V-72067 Add fips=1 to end of line kernel lines
+# TODO: re-examine and modify to work on rhel/centos 6 only
+# execute 'enable fips for kernel modes' do
+#   command "sed -i '/kernel/ s/$/ fips=1/g' /boot/grub/grub.conf"
+#   not_if %Q{grep "fips=1" /boot/grub/grub.conf}
+# end
+
+execute 'enable fips for kernel modes' do
+  command "sed -i '/GRUB_CMDLINE_LINUX/ s/\"\s*$/ fips=1\"/g' /etc/default/grub"
+  notifies :run, 'execute[rebuild_grub_config]'
+  not_if { node['platform_family'] == 'rhel' and major_version < 7 }
+  not_if %Q{grep "GRUB_CMDLINE_LINUX" /etc/default/grub | grep "fips=1"}
+end
+
+# TODO: re-examine and modify to work on rhel/centos 6 only
+# Add audit=1 to end of line kernel lines
+# execute 'enable audit for kernel modes' do
+#   command "sed -i '/kernel/ s/$/ audit=1/g' /boot/grub/grub.conf"
+#   not_if %Q{grep "audit=1" /boot/grub/grub.conf}
+# end
+
+execute 'enable audit for kernel modes' do
+  command "sed -i '/GRUB_CMDLINE_LINUX/ s/\"\s*$/ audit=1\"/g' /etc/default/grub"
+  notifies :run, 'execute[rebuild_grub_config]'
+  not_if { node['platform_family'] == 'rhel' and major_version < 7 }
+  not_if %Q{grep "GRUB_CMDLINE_LINUX" /etc/default/grub | grep "audit=1"}
+end
+
+# force grub2 rebuild if audit=1 not found on all boot config lines
+execute 'check for fips=1' do
+  command %Q{true}
+  notifies :run, 'execute[rebuild_grub_config]'
+  not_if { node['platform_family'] == 'rhel' and major_version < 7 }
+  only_if %Q{grep "^\\s*linux" #{grub_file} | grep -v "fips=1"}
+end
+
+# force grub2 rebuild if audit=1 not found on all boot config lines
+execute 'check for audit=1' do
+  command %Q{true}
+  notifies :run, 'execute[rebuild_grub_config]'
+  not_if { node['platform_family'] == 'rhel' and major_version < 7 }
+  only_if %Q{grep "^\\s*linux" #{grub_file} | grep -v "audit=1"}
+end
+
+execute 'rebuild_grub_config' do
+  user 'root'
+  command %Q{grub2-mkconfig -o #{grub_file}}
+  action :nothing
 end
 
 # 1.5.3

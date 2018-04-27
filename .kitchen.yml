@@ -1,6 +1,6 @@
 <%
   platforms = %w(centos-7 centos-6)
-  use_git = false
+  use_git = true
 %>
 ---
 driver:
@@ -8,6 +8,7 @@ driver:
 
 provisioner:
   name: chef_zero
+  root_path: /home/vagrant/kitchen
 
 verifier:
   name: inspec
@@ -15,23 +16,29 @@ verifier:
   sudo_options: '-u root'
   format: json
   output: hardenedrhel7.json
+  attrs:
+    - attributes.dev.yml
 
 platforms:
 <% platforms.each do |plat| %>
 - name: <%= plat %>
   verifier:
-      inspec_tests:
+    inspec_tests:
       - name: <%= plat %>
       <% if use_git == false %>
         path: ../../auditd_rules_test/inspec_profiles/profiles/disa_stig-rhel7-baseline
       <% else %>
-        git: https://github.com/jburns12/inspec_profiles/tree/master_original/profiles/disa_stig-rhel7-baseline
+        git: https://github.com/djhaynes/inspec-profile-disa_stig-el7
+        branch: dev
       <% end %>
 <% end %>
 
 suites:
   - name: default
     run_list:
+      - recipe[stig::yum]
+      - recipe[stig::yum_update]
+      - recipe[stig::add_packages]
       - recipe[auditd]
       - recipe[stig::auditd]
       - recipe[stig::auditd_rules]
@@ -53,9 +60,10 @@ suites:
       - recipe[stig::login_banner]
       - recipe[stig::file_permissions]
       - recipe[stig::audits]
-      - recipe[stig::audit_scripts]
+      # - recipe[stig::audit_scripts]
       - recipe[stig::su_restriction]
       - recipe[stig::aide]
+      - recipe[stig::local_users]
     attributes:
       "auditd" :
         "ruleset" : "stig"
