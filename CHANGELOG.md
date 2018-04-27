@@ -16,7 +16,15 @@ sysctl cookbook version >= 1.0.0
 -- [isuftin@usgs.gov] - Add guard to sysctl call in order to work around bug https://github.com/chef/chef/issues/7189
 -- [isuftin@usgs.gov] - Switched Changelog format
 -- [isuftin@usgs.gov] - Fixed styling for Rubocop 0.55.0
+### Fixed
 -- [cpoma@mitre.org] - Bugfix in stig/recipes/mail_transfer_agent.rb to use platform_family versus platform
+-- [cpoma@mitre.org] - Bugfix in stig/attributes/default.rb - Errors out and sshd dies (bricking machine) on RH 7 
+when FIPS Mode is enabled. Non-FIPS compliant MACs were specified. FIPS MODE is required to be enabled - RHEL-07-021350 - CCI-002476
+Old Line: default['stig']['sshd_config']['macs'] = 'hmac-md5,hmac-sha1,hmac-ripemd160,hmac-sha1-96,hmac-md5-96'
+Replaced with: default['stig']['sshd_config']['macs'] = 'hmac-sha2-512,hmac-sha2-256'
+See https://people.redhat.com/swells/scap-security-guide/tables/table-rhel7-stig.html
+See http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140sp/140sp2630.pdf
+
 
 ## [0.6.11]
 ### Updated
